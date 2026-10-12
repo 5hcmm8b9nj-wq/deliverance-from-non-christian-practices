@@ -13,8 +13,10 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="topbar"><button id="homeb" aria-label="Main menu">🏠 Menu</button><span class="brand">Only One God</span><button id="theme" aria-label="Switch to night mode">🌙 Night</button></div>
+<header class="sthead"><div class="topbar"><button id="homeb" aria-label="Main menu">🏠 Menu</button><span class="brand">Only One God</span><button id="theme" aria-label="Switch to night mode">🌙 Night</button></div>
+<div class="progwrap"><div class="ptop"><span id="ptext">0 of 0 sections · 0%</span><button id="resetb">↺ Clear / Start over</button></div><div id="pbar" class="pbar" role="progressbar" aria-label="Study progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="pfill"></span></div></div></header>
 <main id="main" tabindex="-1"></main>
+<div id="resetdlg" class="dlg" hidden role="dialog" aria-modal="true" aria-labelledby="rsh"><div class="dlgc"><h2 id="rsh">Clear / Start over</h2><p>What would you like to clear? This cannot be undone.</p><button class="big" id="rs_prog">Clear my progress only</button><p class="small">Keeps your checklist, answers and loved ones.</p><button class="big rsall" id="rs_all">Clear everything</button><p class="small">Removes progress, checklist, written answers, loved ones and journals from this phone.</p><button class="ab" id="rs_cancel">Cancel</button></div></div>
 <div id="now" class="now" hidden><span id="nowt">Playing…</span><button id="nowstop">■ Stop</button></div>
 <nav class="botnav"><button id="prev">◀ Back</button><button id="next">Next ▶</button></nav>
 <script src="kjv.js"></script>

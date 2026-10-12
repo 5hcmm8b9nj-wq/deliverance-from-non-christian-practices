@@ -10,6 +10,7 @@ const SCREENS=[
  {id:"open",t:"Before We Begin",short:"Begin"},
  {id:"teach",t:"What the Deliverance Teachers Say",short:"Teachers"},
  ...S.lessons.map(l=>({id:l.id,t:`Lesson ${l.num}: ${l.title}`,short:l.title,lesson:l})),
+ {id:"index",t:"Index of Non-Christian Practices",short:"Practices Index"},
  {id:"check",t:"My Renunciation Checklist",short:"Checklist"},
  {id:"pray",t:"Repeat-After-Me Deliverance Prayer",short:"Deliverance Prayer"},
  {id:"declare",t:"Fiery Declarations",short:"Declarations"},
@@ -56,14 +57,28 @@ test:`<ol class="tests"><li><b>Does it confess Jesus Christ</b> as Lord and the 
 /* ---------- renderers ---------- */
 function rHome(){
  const tiles=SCREENS.slice(1).map((s,i)=>`<button class="tile ${done.has(s.id)?"done":""}" data-go="${i+1}"><span class="tn">${s.lesson?s.lesson.num:"•"}</span><span class="tt">${esc(s.short||s.t)}</span>${done.has(s.id)?'<span class="tick">✓</span>':""}</button>`).join("");
- const pct=Math.round(done.size/(SCREENS.length-1)*100);
- return `<section class="hero"><div class="hero-mark">${LOGO}</div><p class="eyebrow">Christian deliverance study</p><h1>Only One God</h1><p class="sub">Freedom from Atlantis myths, the Akashic records, and "higher gods" teachings</p></section>
- <div class="card"><p><b>What this is:</b> a phone study that answers two Gaia videos featuring Matias De Stefano, and walks through the occult, Eastern religions, false religions, secret societies and every Gaia program, using the full King James Bible and the words of Derek Prince and Neil T. Anderson. It ends with renunciation, deliverance prayer, and prayer for your loved ones.</p><p class="small">Your checklist and progress are saved only on this phone. Nothing is sent anywhere.</p></div>
- <div class="prog"><div class="prog-bar"><span style="width:${pct}%"></span></div><span>${pct}% complete</span></div>
+  return `<section class="hero"><div class="hero-mark">${LOGO}</div><p class="eyebrow">Christian deliverance study</p><h1>Only One God</h1><p class="sub">Freedom from Atlantis myths, the Akashic records, and "higher gods" teachings</p></section>
+ <div class="card intro"><h2 class="h2" style="margin-top:0">Welcome — what is in this app</h2>
+ <p>This is a Christian deliverance study for your phone. It began with two Gaia videos featuring Matias De Stefano, on Atlantis, the "rise of the gods," the Akashic records and the claim that "Elohim" were many cosmic beings. It answers them, and every other practice listed here, with the full King James Bible and the exact words of two well-known deliverance teachers, Derek Prince and Neil T. Anderson.</p>
+ <p><b>The app is arranged in this order:</b></p>
+ <ol class="introlist">
+  <li><b>Before We Begin</b> — praise, asking God to reveal, confessing faith in Christ, confession, forgiveness, inviting the Holy Spirit.</li>
+  <li><b>What the Deliverance Teachers Say</b> — exact quotes from Derek Prince and Neil T. Anderson.</li>
+  <li><b>11 Lessons</b> — the Gaia videos, Elohim, the oldest lie, the Akashic records, star beings, the clean break, the spirit of antichrist, the occult, Eastern religions, secret societies, and family-line curses. Each has full KJV Scripture, a short explanation at four levels, a question, a prayer and a declaration.</li>
+  <li><b>Index of Non-Christian Practices</b> — every practice in the tool, ${TOTAL} in all, arranged in ${S.checklist.length} groups.</li>
+  <li><b>My Renunciation Checklist</b> — tick what applies and your renunciation prayer builds itself.</li>
+  <li><b>Repeat-After-Me Deliverance Prayer</b> — ${S.deliverance.length} parts.</li>
+  <li><b>Fiery Declarations</b></li>
+  <li><b>Pray for My Loved Ones</b> — a Scripture prayer and prayer journal for each person.</li>
+  <li><b>Practice</b> — flashcards, quiz and "What would you do?"</li>
+  <li><b>Review and Aftercare</b>, <b>Plain-Language Glossary</b> and <b>Sources</b>.</li>
+ </ol>
+ <p><b>How to use it:</b> tap 🔊 Play on any section to listen, or use hands-free to hear the whole study. Switch 💡 Day / 🌙 Night at the top. Your progress, checklist, answers and loved ones are saved only on this phone. Nothing is sent anywhere.</p>
+ <p class="small">Watching the Gaia videos is not required. Each lesson summarises what they claim.</p></div>
  <div class="hf card"><label class="sw"><input type="checkbox" id="hfree" ${store.get("hf",false)?"checked":""}><span></span></label><div><b>Hands-free mode</b><br><span class="small">When a section finishes playing, the next section starts by itself.</span></div></div>
  <button class="big hfgo" id="hfgo">🎧 Listen hands-free to the whole study</button>
  <h2 class="h2">Choose a section</h2><div class="tiles">${tiles}</div>
- <div class="card warn"><p><b>Watching the videos is not required.</b> Each lesson summarises what they claim, so you can learn the truth without reopening the door.</p></div>`;
+ `;
 }
 function rOpen(){
  return audioBar("open","Listen and pray along")+`<p class="lead">Before teaching, we follow a simple order: praise, confession, forgiveness, and inviting the Holy Spirit.</p>`+
@@ -119,6 +134,16 @@ function myPrayerLines(){
 }
 const PROPER=/^("?)(Matias|Atlantis|Arcturians|Pleiadians|Sirians|Orion|Anunnaki|Bashar|Ouija|Dungeons|Magic|Tarot|ESP|Akashic|I|Bloody|Voodoo|Santería|Obeah|Juju|Satanism|Luciferianism|Kabbalah|Hermetic|Reiki|Kundalini|Human|Gene|Silva|The|Science|Hinduism|Buddhism|Tibetan|Zen|Taoism|Jainism|Shinto|Hare|Transcendental|Falun|Osho|Sai|Self-Realization|Eckankar|Christian|Unity|Unification|Mormonism|Church|Jehovah's|Children|Bahaism|Rosicrucianism|Roy|Father|Theosophical|Islam|Black|Humanism|Scientology|Gnosticism|Freemasonry|Order|Shriners|DeMolay|Job's|Knights|Masonic|Japa|Buddha|Ayurveda|New|God|Sofia|Mother|Gaia|Edgar|Wicca|Mindfulness)\b/;
 function lc(i){if(PROPER.test(i))return i;return i.charAt(0)==='"'?'"'+i.charAt(1).toLowerCase()+i.slice(2):i.charAt(0).toLowerCase()+i.slice(1)}
+const TOTAL=S.checklist.reduce((n,g)=>n+g.items.length,0);
+function rIndex(){
+ const sel=new Set(store.get("sel2",[]));const nonGaia=S.checklist.filter(g=>!g.search).reduce((n,g)=>n+g.items.length,0);
+ let h=`<p class="lead">This is every non-Christian practice, program, religion, society, object and vow in this tool. Tap a group to see every item, or jump straight to it in your checklist.</p>`;
+ h+=`<div class="card tot"><div class="totn">${TOTAL}</div><div><b>items in all</b><br><span class="small">${nonGaia} practices, religions, groups, objects and vows<br>+ ${S.checklist.find(g=>g.search).items.length} Gaia programs</span><br><span class="small">Also: ${S.kingdom.length} special Kingdom of Darkness renunciations</span></div></div>`;
+ h+=`<table class="itab"><thead><tr><th>#</th><th>Group</th><th>Items</th></tr></thead><tbody>${S.checklist.map((g,i)=>`<tr><td>${i+1}</td><td>${esc(g.g)}</td><td>${g.items.length}</td></tr>`).join("")}<tr class="sum"><td></td><td>Total</td><td>${TOTAL}</td></tr></tbody></table>`;
+ h+=S.checklist.map((g,gi)=>`<details class="card grp ix"><summary><span class="gt">${gi+1}. ${esc(g.g)}</span><span class="gc">${g.items.length} items${g.src?" · source: "+esc(S.sources[g.src].n.split(" — ")[0]):""}</span></summary><ol class="ixl">${g.items.map((it,ii)=>`<li class="${sel.has(gi+"_"+ii)?"tk":""}">${esc(it)}</li>`).join("")}</ol><button class="ab" data-jump="${gi}">Go to this group in my checklist ▶</button></details>`).join("");
+ h+=`<details class="card grp ix"><summary><span class="gt">Special: Kingdom of Darkness → Light</span><span class="gc">${S.kingdom.length} renunciations · Neil T. Anderson</span></summary><ol class="ixl">${S.kingdom.map(k=>`<li>${esc(k[0])}</li>`).join("")}</ol></details>`;
+ return h;
+}
 function rTeach(){
  return audioBar("teach","🔊 Hear the teachers' words")+`<p class="lead">These are the exact words of two well-known deliverance teachers. Tap a link to read or hear the full teaching.</p>`+S.teachers.map(t=>`<div class="card"><h3>${esc(t.who)}</h3><p class="small">${esc(t.about)}</p>${t.quotes.map((q,i)=>`<blockquote class="tq" data-line="tq_${esc(t.who)}_${i}">"${esc(q.q)}"</blockquote>${srcLink(q.s)}`).join("")}</div>`).join("");
 }
@@ -166,7 +191,7 @@ function render(i,auto){
  stopAudio();
  cur=Math.max(0,Math.min(SCREENS.length-1,i));
  const s=SCREENS[cur];let body;
- if(s.id==="home")body=rHome();else if(s.id==="open")body=rOpen();else if(s.id==="teach")body=rTeach();else if(s.id==="loved")body=rLoved();else if(s.lesson)body=rLesson(s.lesson);else if(s.id==="check")body=rCheck();else if(s.id==="pray")body=rPray();else if(s.id==="declare")body=rDeclare();else if(s.id==="practice")body=rPractice();else if(s.id==="review")body=rReview();else if(s.id==="gloss")body=rGloss();else body=rSrc();
+ if(s.id==="home")body=rHome();else if(s.id==="open")body=rOpen();else if(s.id==="teach")body=rTeach();else if(s.id==="index")body=rIndex();else if(s.id==="loved")body=rLoved();else if(s.lesson)body=rLesson(s.lesson);else if(s.id==="check")body=rCheck();else if(s.id==="pray")body=rPray();else if(s.id==="declare")body=rDeclare();else if(s.id==="practice")body=rPractice();else if(s.id==="review")body=rReview();else if(s.id==="gloss")body=rGloss();else body=rSrc();
  $("#main").innerHTML=(s.id==="home"?"":`<header class="ph"><p class="eyebrow">${cur} of ${SCREENS.length-1}</p><h1>${esc(s.t)}</h1></header>`)+body;
  $("#prev").disabled=cur===0;$("#next").disabled=cur===SCREENS.length-1;
  $("#next").textContent=cur===0?"Start ▶":"Next ▶";
@@ -174,10 +199,11 @@ function render(i,auto){
  if(s.id==="check"){updPrayer();updCounts()}
  if(s.id==="practice")initFC();
  if(s.id==="review")updComplete();
- if(s.id!=="home"&&!s.lesson&&!["practice","check"].includes(s.id)){done.add(s.id);store.set("done",[...done])}
- history.replaceState(null,"","#"+s.id);
+ if(s.id!=="home"&&!s.lesson&&!["practice","check"].includes(s.id)){done.add(s.id);(store.set("done",[...done]),updProg())}
+ history.replaceState(null,"","#"+s.id);updProg();
  if(auto){const b=document.querySelector(".abar .play");if(b)setTimeout(()=>playSec(b.dataset.sec),400)}
 }
+function updProg(){const t=SCREENS.length-1;const n=SCREENS.slice(1).filter(s=>done.has(s.id)).length;const p=Math.round(n/t*100);$("#pfill").style.width=p+"%";$("#ptext").textContent=`${n} of ${t} sections · ${p}%`;$("#pbar").setAttribute("aria-valuenow",p)}
 function updComplete(){const n=done.size,t=SCREENS.length-1;$("#complete").innerHTML=n>=t-1?`<div class="trophy">🏆</div><h3>Study complete</h3><p>"If the Son therefore shall make you free, ye shall be free indeed." — John 8:36</p>`:`<p class="small">You have completed ${n} of ${t} sections. Mark each lesson complete to finish the study.</p>`}
 
 /* ---------- audio ---------- */
@@ -246,15 +272,19 @@ document.addEventListener("click",e=>{
  if(t.id==="theme"){const d=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=d;store.set("theme",d);t.setAttribute("aria-label",d==="dark"?"Switch to day mode":"Switch to night mode");t.textContent=d==="dark"?"💡 Day":"🌙 Night";return}
  if(t.classList.contains("ltab")){const w=t.closest(".levels");w.querySelectorAll(".ltab").forEach(x=>x.classList.toggle("on",x===t));w.querySelectorAll(".lv").forEach(x=>x.classList.toggle("on",x.dataset.lv===t.dataset.lv));return}
  if(t.classList.contains("opt")){const m=t.closest(".mcq");if(m.classList.contains("answered"))return;m.classList.add("answered");const ok=+t.dataset.i===+m.dataset.ans;m.querySelectorAll(".opt").forEach(o=>{if(+o.dataset.i===+m.dataset.ans)o.classList.add("right")});if(!ok)t.classList.add("wrong");const fb=m.querySelector(".fb");fb.hidden=false;fb.querySelector(".fbt").textContent=ok?"✅ Correct":"❌ Not quite — here is why";m.dataset.ok=ok?1:0;
-  const qs=document.querySelectorAll('.mcq[data-id^="qz"]');const an=[...qs].filter(x=>x.classList.contains("answered"));if(qs.length&&an.length===qs.length){const sc=an.filter(x=>x.dataset.ok==1).length;$("#score").innerHTML=`<b>Your score: ${sc} / ${qs.length}</b> ${sc===qs.length?"— excellent!":"— review the explanations and try again later."}`;done.add("practice");store.set("done",[...done])}return}
- if(t.dataset.done){done.add(t.dataset.done);store.set("done",[...done]);t.textContent="✓ Lesson complete";return}
+  const qs=document.querySelectorAll('.mcq[data-id^="qz"]');const an=[...qs].filter(x=>x.classList.contains("answered"));if(qs.length&&an.length===qs.length){const sc=an.filter(x=>x.dataset.ok==1).length;$("#score").innerHTML=`<b>Your score: ${sc} / ${qs.length}</b> ${sc===qs.length?"— excellent!":"— review the explanations and try again later."}`;done.add("practice");(store.set("done",[...done]),updProg())}return}
+ if(t.dataset.done){done.add(t.dataset.done);(store.set("done",[...done]),updProg());t.textContent="✓ Lesson complete";return}
  if(t.id==="fc"){fc.b=!fc.b;drawFC();return}
  if(t.id==="fcx"){fc.i=(fc.i+1)%fc.o.length;fc.b=false;drawFC();return}
  if(t.id==="fcp"){fc.i=(fc.i-1+fc.o.length)%fc.o.length;fc.b=false;drawFC();return}
  if(t.id==="fcr"){fc.o.sort(()=>Math.random()-.5);fc.i=0;fc.b=false;drawFC();return}
  if(t.id==="clearck"){store.set("sel2",[]);store.set("extra","");render(cur);return}
+ if(t.dataset.jump){const g=+t.dataset.jump;render(SCREENS.findIndex(s=>s.id==="check"));const d=document.querySelectorAll("details.grp")[g];if(d){d.open=true;d.scrollIntoView({block:"start"})}return}
+ if(t.id==="resetb"){$("#resetdlg").hidden=false;return}
+ if(t.id==="rs_cancel"){$("#resetdlg").hidden=true;return}
+ if(t.id==="rs_prog"||t.id==="rs_all"){done.clear();store.set("done",[]);if(t.id==="rs_all"){["sel2","extra","loved","hf"].forEach(k=>store.set(k,k==="sel2"||k==="loved"?[]:k==="hf"?false:""));S.lessons.forEach(l=>store.set("apply_"+l.id,""))}$("#resetdlg").hidden=true;render(0);return}
  if(t.id==="hfgo"){store.set("hf",true);render(1,true);return}
- if(t.id==="lvadd"){const n=$("#lvn").value.trim();if(!n){$("#lvn").focus();$("#lvn").placeholder="Please type a name";return}const st=document.querySelector('input[name=lvst]:checked').value;const areas=[...document.querySelectorAll("[data-area]:checked")].map(x=>AREAS[+x.dataset.area]);const L=store.get("loved",[]);L.push({n,st,areas,other:$("#lvo").value.trim(),j:[],ans:false});store.set("loved",L);done.add("loved");store.set("done",[...done]);render(cur);setTimeout(()=>{const c=document.querySelectorAll(".lvp");c[c.length-1]&&c[c.length-1].scrollIntoView({block:"start"})},50);return}
+ if(t.id==="lvadd"){const n=$("#lvn").value.trim();if(!n){$("#lvn").focus();$("#lvn").placeholder="Please type a name";return}const st=document.querySelector('input[name=lvst]:checked').value;const areas=[...document.querySelectorAll("[data-area]:checked")].map(x=>AREAS[+x.dataset.area]);const L=store.get("loved",[]);L.push({n,st,areas,other:$("#lvo").value.trim(),j:[],ans:false});store.set("loved",L);done.add("loved");(store.set("done",[...done]),updProg());render(cur);setTimeout(()=>{const c=document.querySelectorAll(".lvp");c[c.length-1]&&c[c.length-1].scrollIntoView({block:"start"})},50);return}
  if(t.dataset.lvsave){const i=+t.dataset.lvsave;const ta=document.querySelector(`[data-lvj="${i}"]`);const v=ta.value.trim();if(!v)return;const L=store.get("loved",[]);(L[i].j=L[i].j||[]).unshift({d:new Date().toLocaleDateString(),t:v});store.set("loved",L);render(cur);document.querySelectorAll(".lvp")[i].scrollIntoView({block:"start"});return}
  if(t.dataset.lvans){const i=+t.dataset.lvans;const L=store.get("loved",[]);L[i].ans=!L[i].ans;store.set("loved",L);render(cur);document.querySelectorAll(".lvp")[i].scrollIntoView({block:"start"});return}
  if(t.dataset.lvdel){const i=+t.dataset.lvdel;const L=store.get("loved",[]);if(!confirm("Remove "+L[i].n+" and their journal from this phone?"))return;L.splice(i,1);store.set("loved",L);render(cur);return}
@@ -262,7 +292,7 @@ document.addEventListener("click",e=>{
 document.addEventListener("change",e=>{
  const t=e.target;
  if(t.id==="hfree"){store.set("hf",t.checked);return}
- if(t.dataset.ck){const s=new Set(store.get("sel2",[]));t.checked?s.add(t.dataset.ck):s.delete(t.dataset.ck);store.set("sel2",[...s]);updPrayer();updCounts();if(s.size){done.add("check");store.set("done",[...done])}}
+ if(t.dataset.ck){const s=new Set(store.get("sel2",[]));t.checked?s.add(t.dataset.ck):s.delete(t.dataset.ck);store.set("sel2",[...s]);updPrayer();updCounts();if(s.size){done.add("check");(store.set("done",[...done]),updProg())}}
 });
 document.addEventListener("input",e=>{const t=e.target;if(t.dataset.srch){const q=t.value.toLowerCase().trim();document.querySelectorAll(`.cks[data-g="${t.dataset.srch}"] .ck`).forEach(l=>{l.hidden=q&&!l.dataset.t.includes(q)})}if(t.id==="extra"){store.set("extra",t.value);updPrayer()}if(t.dataset.k)store.set(t.dataset.k,t.value)});
 
