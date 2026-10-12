@@ -8,10 +8,12 @@ const store={get(k,d){try{return JSON.parse(localStorage.getItem("o1g_"+k))??d}c
 const SCREENS=[
  {id:"home",t:"Home"},
  {id:"open",t:"Before We Begin",short:"Begin"},
+ {id:"teach",t:"What the Deliverance Teachers Say",short:"Teachers"},
  ...S.lessons.map(l=>({id:l.id,t:`Lesson ${l.num}: ${l.title}`,short:l.title,lesson:l})),
  {id:"check",t:"My Renunciation Checklist",short:"Checklist"},
  {id:"pray",t:"Repeat-After-Me Deliverance Prayer",short:"Deliverance Prayer"},
  {id:"declare",t:"Fiery Declarations",short:"Declarations"},
+ {id:"loved",t:"Pray for My Loved Ones",short:"Loved Ones"},
  {id:"practice",t:"Practice: Flashcards, Quiz and Scenarios",short:"Practice"},
  {id:"review",t:"Review and Aftercare",short:"Review"},
  {id:"gloss",t:"Plain-Language Glossary",short:"Glossary"},
@@ -26,6 +28,7 @@ function scr(ref){
  const plain=v.map(x=>x.t).join(" ");
  return `<figure class="scr"><figcaption><span class="ref">${esc(ref)}</span><button class="mini" data-say="${esc(ref.replace(/:/," chapter ").replace("-"," to ")+". "+plain)}" aria-label="Read ${esc(ref)} aloud">🔊 Listen</button></figcaption><blockquote>${txt}</blockquote></figure>`;
 }
+function srcLink(k){const s=S.sources[k];return s&&s.u&&s.u!="#"?`<a class="srcl" href="${s.u}" target="_blank" rel="noopener">${esc(s.n)} ↗</a>`:""}
 function refsInline(refs){return refs.map(scr).join("")}
 function audioBar(id,label){return `<div class="abar" data-sec="${id}"><span class="alabel">${label||"Listen to this section"}</span><div class="abtns"><button class="ab play" data-act="play" data-sec="${id}">▶ Play</button><button class="ab" data-act="pause" data-sec="${id}">❚❚ Pause</button><button class="ab" data-act="stop" data-sec="${id}">■ Stop</button></div></div>`}
 
@@ -55,15 +58,16 @@ function rHome(){
  const tiles=SCREENS.slice(1).map((s,i)=>`<button class="tile ${done.has(s.id)?"done":""}" data-go="${i+1}"><span class="tn">${s.lesson?s.lesson.num:"•"}</span><span class="tt">${esc(s.short||s.t)}</span>${done.has(s.id)?'<span class="tick">✓</span>':""}</button>`).join("");
  const pct=Math.round(done.size/(SCREENS.length-1)*100);
  return `<section class="hero"><div class="hero-mark">${LOGO}</div><p class="eyebrow">Christian deliverance study</p><h1>Only One God</h1><p class="sub">Freedom from Atlantis myths, the Akashic records, and "higher gods" teachings</p></section>
- <div class="card"><p><b>What this is:</b> a phone study that answers two Gaia videos featuring Matias De Stefano with the full KJV Scripture, then walks you through repentance, renunciation, and deliverance prayer.</p><p class="small">Your checklist and progress are saved only on this phone. Nothing is sent anywhere.</p></div>
+ <div class="card"><p><b>What this is:</b> a phone study that answers two Gaia videos featuring Matias De Stefano, and walks through the occult, Eastern religions, false religions, secret societies and every Gaia program, using the full King James Bible and the words of Derek Prince and Neil T. Anderson. It ends with renunciation, deliverance prayer, and prayer for your loved ones.</p><p class="small">Your checklist and progress are saved only on this phone. Nothing is sent anywhere.</p></div>
  <div class="prog"><div class="prog-bar"><span style="width:${pct}%"></span></div><span>${pct}% complete</span></div>
  <div class="hf card"><label class="sw"><input type="checkbox" id="hfree" ${store.get("hf",false)?"checked":""}><span></span></label><div><b>Hands-free mode</b><br><span class="small">When a section finishes playing, the next section starts by itself.</span></div></div>
+ <button class="big hfgo" id="hfgo">🎧 Listen hands-free to the whole study</button>
  <h2 class="h2">Choose a section</h2><div class="tiles">${tiles}</div>
  <div class="card warn"><p><b>Watching the videos is not required.</b> Each lesson summarises what they claim, so you can learn the truth without reopening the door.</p></div>`;
 }
 function rOpen(){
  return audioBar("open","Listen and pray along")+`<p class="lead">Before teaching, we follow a simple order: praise, confession, forgiveness, and inviting the Holy Spirit.</p>`+
- S.opening.map((o,i)=>`<div class="card step"><div class="stepn">${i+1}</div><h3>${esc(o.t)}</h3>${scr(o.r)}<div class="praycard"><span class="lbl">🙏🏽 PRAY</span><p>${esc(o.p)}</p></div></div>`).join("");
+ S.opening.map((o,i)=>`<div class="card step"><div class="stepn">${i+1}</div><h3>${esc(o.t)}</h3>${scr(o.r)}<div class="praycard"><span class="lbl">🙏🏽 PRAY</span><p>${esc(o.p)}</p>${o.by?`<p class="by">— ${esc(o.by)}</p>${srcLink(o.s)}`:""}</div></div>`).join("");
 }
 function levelTabs(l){
  const L=l.levels;const keys=[["simple","👦🏽 Simple"],["teen","🧑🏽 Teen"],["adult","👩🏽 Adult"],["deep","🎓 Deeper Study"]];
@@ -74,7 +78,7 @@ function mcq(id,q,opts,ans,why){
 }
 function rLesson(l){
  let h=audioBar(l.id,"🔊 Listen to this lesson");
- h+=`<p class="tagline">${esc(l.tag)}</p><p class="lead">${esc(l.intro)}</p>`;
+ h+=`<p class="tagline">${esc(l.tag)}</p><p class="lead">${esc(l.intro)}</p>`;if(l.introSrc)h+=[].concat(l.introSrc).map(srcLink).join("<br>");
  if(l.claims){
   h+=`<h3 class="h3">👀 Claim vs. Truth <span class="hint">Tap each card</span></h3>`;
   h+=l.claims.map((c,i)=>`<details class="claim"><summary><span class="cl-lbl">The video claims</span><span>${esc(c.c)}</span><span class="tap">Tap for God's Word ▾</span></summary><div class="truth"><span class="tr-lbl">What God says</span><p>${esc(c.a)}</p>${refsInline(c.refs)}</div></details>`).join("");
@@ -95,20 +99,40 @@ function rLesson(l){
 }
 function ladder(steps){return `<ol class="ladder">${steps.map((s,i)=>`<li><span>${i+1}</span>${esc(s)}</li>`).join("")}</ol>`}
 function rCheck(){
- const sel=new Set(store.get("sel",[]));
- let h=`<p class="lead">Tick only what applies to you. Your private renunciation prayer builds itself below. Nothing leaves this phone.</p>`;
- h+=S.checklist.map((g,gi)=>`<fieldset class="card grp"><legend>${esc(g.g)}</legend>${g.items.map((it,ii)=>{const k=gi+"_"+ii;return `<label class="ck"><input type="checkbox" data-ck="${k}" ${sel.has(k)?"checked":""}><span>${esc(it)}</span></label>`}).join("")}</fieldset>`).join("");
- h+=`<div class="card"><label class="fl" for="extra">Other teachers, readers, books, or practices (optional)</label><textarea id="extra" rows="2" placeholder="Separate with commas">${esc(store.get("extra",""))}</textarea></div>`;
- h+=`<h3 class="h3">🙏🏽 My personal renunciation</h3>`+audioBar("check","Pray your list aloud")+`<div id="myprayer" class="praycard big-p"></div><button class="ab" id="clearck">Clear my checklist</button>`;
+ const sel=new Set(store.get("sel2",[]));
+ let h=`<p class="lead">Tick everything you have been involved in, even if you only watched or took part "for fun." Your prayer builds itself at the bottom. Nothing leaves this phone.</p>`;
+ h+=`<blockquote class="tq">"Even if you innocently participated in something or observed it, you should write it on your list to renounce, just in case you unknowingly gave Satan a foothold."<cite>— Neil T. Anderson</cite></blockquote>${srcLink("na")}`;
+ h+=`<p class="small" id="ckcount"></p>`;
+ h+=S.checklist.map((g,gi)=>{const n=g.items.filter((_,ii)=>sel.has(gi+"_"+ii)).length;return `<details class="card grp" ${gi===0?"":""}><summary><span class="gt">${esc(g.g)}</span><span class="gc" data-gc="${gi}">${n?n+" ticked · ":""}${g.items.length} items</span></summary>${g.src?`<p class="small">Source: ${srcLink(g.src)}</p>`:""}${g.search?`<input class="srch" type="search" data-srch="${gi}" placeholder="Search ${g.items.length} programs" autocomplete="off" autocapitalize="off" spellcheck="false">`:""}<div class="cks" data-g="${gi}">${g.items.map((it,ii)=>{const k=gi+"_"+ii;return `<label class="ck" data-t="${esc(it.toLowerCase())}"><input type="checkbox" data-ck="${k}" ${sel.has(k)?"checked":""}><span>${esc(it)}</span></label>`}).join("")}</div></details>`}).join("");
+ h+=`<div class="card"><label class="fl" for="extra">Anything not listed: teachers, readers, books, apps, groups (optional)</label><textarea id="extra" rows="2" placeholder="Separate with commas">${esc(store.get("extra",""))}</textarea></div>`;
+ h+=`<h3 class="h3">🙏🏽 My personal renunciation</h3><p class="small">Prayer format from Neil T. Anderson's Steps to Freedom in Christ, with Derek Prince's confession of faith.</p>`+audioBar("check","🗣️ Pray your list aloud")+`<div id="myprayer" class="praycard big-p"></div>`;
+ h+=`<details class="card"><summary><b>Special renunciations: Kingdom of Darkness → Kingdom of Light</b><br><span class="small">For anyone who was in satanic ritual or heavy occult activity (Neil T. Anderson)</span></summary>${audioBar("kg","🗣️ Renounce and announce")}${S.kingdom.map((r,i)=>`<div class="kg"><p class="kd" data-line="kg_${i}a">${esc(r[0])}</p><p class="kl" data-line="kg_${i}b">${esc(r[1])}</p></div>`).join("")}${srcLink("na")}</details>`;
+ h+=`<button class="ab" id="clearck">Clear my checklist</button>`;
  return h;
 }
+function selItems(){const sel=store.get("sel2",[]);return sel.map(k=>{const[g,i]=k.split("_").map(Number);const G=S.checklist[g];if(!G||!G.items[i])return null;return G.search?`watching the Gaia program "${G.items[i]}"`:lc(G.items[i])}).filter(Boolean)}
 function myPrayerLines(){
- const sel=store.get("sel",[]);const ex=(store.get("extra","")||"").split(",").map(s=>s.trim()).filter(Boolean);
- const items=sel.map(k=>{const[g,i]=k.split("_").map(Number);return S.checklist[g]&&S.checklist[g].items[i]}).filter(Boolean).concat(ex);
+ const ex=(store.get("extra","")||"").split(",").map(s=>s.trim()).filter(Boolean);
+ const items=selItems().concat(ex);
  if(!items.length) return ["Tick the items that apply to you, and your prayer will appear here."];
- return ["Lord Jesus Christ, I come to You and I confess my involvement in these things.",...items.map(i=>`I renounce ${lc(i)}, in the name of Jesus Christ.`),"I break every tie, agreement, and influence connected to them, by the blood of Jesus.","Holy Spirit, fill every place that was given to them. I belong to Jesus alone. Amen."];
+ return ["Lord Jesus Christ, I believe that you are the Son of God, that you died on the cross for my sin and rose again from the dead.",...items.map(i=>`Lord, I confess that I have participated in ${i}, and I renounce ${i}. Thank you that in Christ I am forgiven.`),"I break every contact, and I will get rid of every object connected with these things.","Holy Spirit, fill every place that was given to them. I belong to Jesus Christ alone. Amen."];
 }
-function lc(i){const w=i.split(" ")[0].replace(/^"/,"");return /^(Ancient-aliens|Channelled|Online|Past-life|Asking|Starseed|Light-beings|Belief|Chakra|Sacred|Crystals|Worship|Opening)$/.test(w)?i.charAt(0)==="\""?"\""+i.charAt(1).toLowerCase()+i.slice(2):i.charAt(0).toLowerCase()+i.slice(1):i}
+const PROPER=/^("?)(Matias|Atlantis|Arcturians|Pleiadians|Sirians|Orion|Anunnaki|Bashar|Ouija|Dungeons|Magic|Tarot|ESP|Akashic|I|Bloody|Voodoo|Santería|Obeah|Juju|Satanism|Luciferianism|Kabbalah|Hermetic|Reiki|Kundalini|Human|Gene|Silva|The|Science|Hinduism|Buddhism|Tibetan|Zen|Taoism|Jainism|Shinto|Hare|Transcendental|Falun|Osho|Sai|Self-Realization|Eckankar|Christian|Unity|Unification|Mormonism|Church|Jehovah's|Children|Bahaism|Rosicrucianism|Roy|Father|Theosophical|Islam|Black|Humanism|Scientology|Gnosticism|Freemasonry|Order|Shriners|DeMolay|Job's|Knights|Masonic|Japa|Buddha|Ayurveda|New|God|Sofia|Mother|Gaia|Edgar|Wicca|Mindfulness)\b/;
+function lc(i){if(PROPER.test(i))return i;return i.charAt(0)==='"'?'"'+i.charAt(1).toLowerCase()+i.slice(2):i.charAt(0).toLowerCase()+i.slice(1)}
+function rTeach(){
+ return audioBar("teach","🔊 Hear the teachers' words")+`<p class="lead">These are the exact words of two well-known deliverance teachers. Tap a link to read or hear the full teaching.</p>`+S.teachers.map(t=>`<div class="card"><h3>${esc(t.who)}</h3><p class="small">${esc(t.about)}</p>${t.quotes.map((q,i)=>`<blockquote class="tq" data-line="tq_${esc(t.who)}_${i}">"${esc(q.q)}"</blockquote>${srcLink(q.s)}`).join("")}</div>`).join("");
+}
+const AREAS=["Gaia programs","Atlantis and star-being teachings","Akashic records","occult practices","divination and psychics","witchcraft","New Age practices","Eastern religions","false religions and cults","secret societies and oaths","family-line curses"];
+function lovedLines(p){const ar=(p.areas||[]).concat((p.other||"").split(",").map(s=>s.trim()).filter(Boolean));const list=ar.length>1?ar.slice(0,-1).join(", ")+" and "+ar[ar.length-1]:ar[0]||"";return (p.st==="past"?S.loved.past:S.loved.still)(p.n,list)}
+function rLoved(){
+ const L=store.get("loved",[]);
+ let h=`<p class="lead">Stand in the gap for family and friends who were in these things, or who are still in them. Their names stay only on this phone.</p>`;
+ h+=`<details class="card"><summary><b>📖 Scriptures for intercession</b> <span class="hint">Tap to open</span></summary>${refsInline(S.loved.refs)}</details>`;
+ h+=`<div class="card addp"><h3>Add a loved one</h3><label class="fl" for="lvn">Name</label><input id="lvn" class="tin" type="text" placeholder="First name" autocomplete="off" autocapitalize="words" spellcheck="false"><p class="fl">Where are they now?</p><label class="ck"><input type="radio" name="lvst" value="still" checked><span>Still in it</span></label><label class="ck"><input type="radio" name="lvst" value="past"><span>Came out of it / experienced it before</span></label><p class="fl">What were they involved in? (optional)</p><div class="chips">${AREAS.map((x,i)=>`<label class="chip"><input type="checkbox" data-area="${i}"><span>${esc(x)}</span></label>`).join("")}</div><label class="fl" for="lvo">Anything else (optional)</label><input id="lvo" class="tin" type="text" placeholder="e.g. a guru, a lodge, a psychic" autocomplete="off"><button class="big" id="lvadd">Add and build prayer</button></div>`;
+ if(!L.length)h+=`<p class="small">No names yet. Add someone above to begin.</p>`;
+ h+=L.map((p,i)=>`<div class="card lvp ${p.ans?"ans":""}"><div class="lvh"><h3>${esc(p.n)}</h3><span class="tagp">${p.st==="past"?"Came out":"Still in it"}</span></div>${audioBar("lv"+i,"🙏🏽 Pray for "+esc(p.n))}<div class="praycard">${lovedLines(p).map((l,j)=>`<p data-line="lv${i}_${j}">${esc(l)}</p>`).join("")}</div><label class="fl" for="jr${i}">My prayer journal for ${esc(p.n)}</label><textarea id="jr${i}" data-lvj="${i}" rows="2" placeholder="Write a prayer, a date, or what God showed you"></textarea><button class="ab" data-lvsave="${i}">Save entry</button><ul class="jl">${(p.j||[]).map(e=>`<li><b>${esc(e.d)}</b> — ${esc(e.t)}</li>`).join("")}</ul><div class="lvb"><button class="ab" data-lvans="${i}">${p.ans?"✓ Answered — thank You, Lord":"Mark prayer answered"}</button><button class="ab del" data-lvdel="${i}">Remove</button></div></div>`).join("");
+ return h;
+}
 function rPray(){
  let h=`<p class="lead">Read or listen to each line, then say it out loud. When you press Play, each line is spoken and then there is a pause for you to repeat it.</p>`;
  h+=`<div class="card"><label class="fl" for="gap">Repeat pause length</label><select id="gap"><option value="1">Short</option><option value="1.6" selected>Normal</option><option value="2.4">Long</option></select></div>`;
@@ -134,7 +158,7 @@ function rReview(){
 }
 function rGloss(){return `<p class="lead">Simple meanings for words in this study.</p>`+S.glossary.map(g=>`<details class="gl"><summary>${esc(g.w)}</summary><p>${esc(g.d)}</p></details>`).join("")}
 function rSrc(){
- const s=S.sources;return `<p class="lead">Scripture is from the King James Version. Created prayers, declarations, and scenarios in this study are teaching aids, not quotations.</p><ul class="srcs">${["v1","v2","britannica","anunnaki","theosophical","cri"].map(k=>`<li><a href="${s[k].u}" target="_blank" rel="noopener">${esc(s[k].n)} ↗</a></li>`).join("")}</ul>`;
+ const s=S.sources;return `<p class="lead">Scripture is from the King James Version. Created prayers, declarations, and scenarios in this study are teaching aids, not quotations.</p><ul class="srcs">${["v1","v2","gaia","s207","s86","s80","s25","s297","s24","r34","r209","na","ficm","britannica","anunnaki","theosophical","cri"].map(k=>`<li><a href="${s[k].u}" target="_blank" rel="noopener">${esc(s[k].n)} ↗</a></li>`).join("")}</ul>`;
 }
 
 /* ---------- navigation ---------- */
@@ -142,12 +166,12 @@ function render(i,auto){
  stopAudio();
  cur=Math.max(0,Math.min(SCREENS.length-1,i));
  const s=SCREENS[cur];let body;
- if(s.id==="home")body=rHome();else if(s.id==="open")body=rOpen();else if(s.lesson)body=rLesson(s.lesson);else if(s.id==="check")body=rCheck();else if(s.id==="pray")body=rPray();else if(s.id==="declare")body=rDeclare();else if(s.id==="practice")body=rPractice();else if(s.id==="review")body=rReview();else if(s.id==="gloss")body=rGloss();else body=rSrc();
+ if(s.id==="home")body=rHome();else if(s.id==="open")body=rOpen();else if(s.id==="teach")body=rTeach();else if(s.id==="loved")body=rLoved();else if(s.lesson)body=rLesson(s.lesson);else if(s.id==="check")body=rCheck();else if(s.id==="pray")body=rPray();else if(s.id==="declare")body=rDeclare();else if(s.id==="practice")body=rPractice();else if(s.id==="review")body=rReview();else if(s.id==="gloss")body=rGloss();else body=rSrc();
  $("#main").innerHTML=(s.id==="home"?"":`<header class="ph"><p class="eyebrow">${cur} of ${SCREENS.length-1}</p><h1>${esc(s.t)}</h1></header>`)+body;
  $("#prev").disabled=cur===0;$("#next").disabled=cur===SCREENS.length-1;
  $("#next").textContent=cur===0?"Start ▶":"Next ▶";
  window.scrollTo(0,0);
- if(s.id==="check")updPrayer();
+ if(s.id==="check"){updPrayer();updCounts()}
  if(s.id==="practice")initFC();
  if(s.id==="review")updComplete();
  if(s.id!=="home"&&!s.lesson&&!["practice","check"].includes(s.id)){done.add(s.id);store.set("done",[...done])}
@@ -163,6 +187,9 @@ function queueFor(sec){
  const root=document.querySelector(`.abar[data-sec="${sec}"]`);const gap=+(($("#gap")||{}).value||1.6);
  if(sec==="open")return S.opening.flatMap(o=>[{t:o.t},{t:refText(o.r)},{t:"Let us pray. "+o.p}]);
  if(sec==="check")return myPrayerLines().map(t=>({t,rep:gap}));
+ if(sec==="kg")return S.kingdom.flatMap((r,i)=>[{t:r[0],rep:gap,hl:"kg_"+i+"a"},{t:r[1],rep:gap,hl:"kg_"+i+"b"}]);
+ if(sec==="teach")return S.teachers.flatMap(t=>[{t:t.who+" said:"}].concat(t.quotes.map((q,i)=>({t:q.q,hl:"tq_"+t.who+"_"+i}))));
+ if(/^lv\d+$/.test(sec)){const p=store.get("loved",[])[+sec.slice(2)];return p?[{t:"Let us pray for "+p.n+"."}].concat(lovedLines(p).map((t,j)=>({t,hl:sec+"_"+j}))):[]}
  if(sec==="declare")return S.declarations.map((t,i)=>({t,rep:gap,hl:"declare_"+i}));
  if(sec==="review")return [...document.querySelectorAll("#main .three li, #main .after li")].map(e=>({t:e.textContent})).concat([{t:document.querySelector("#main .praycard p").textContent}]);
  if(/^p\d+$/.test(sec)){const d=S.deliverance[+sec.slice(1)];return [{t:d.t}].concat(d.lines.map((t,j)=>({t,rep:gap,hl:sec+"_"+j})))}
@@ -195,7 +222,7 @@ function stopAudio(){clearTimeout(A.timer);A.token=Date.now();A.paused=false;con
 function advanceHF(sec){
  const bars=[...document.querySelectorAll(".abar")].map(b=>b.dataset.sec);const k=bars.indexOf(sec);
  if(k>-1&&k<bars.length-1){setTimeout(()=>playSec(bars[k+1]),800);return}
- if(cur<SCREENS.length-1){let n=cur+1;while(n<SCREENS.length&&["check","practice","gloss","src"].includes(SCREENS[n].id))n++;if(n<SCREENS.length&&SCREENS[n].id!=="src")setTimeout(()=>render(n,true),900)}
+ if(cur<SCREENS.length-1){let n=cur+1;while(n<SCREENS.length&&["practice","gloss","src"].includes(SCREENS[n].id))n++;if(n<SCREENS.length&&SCREENS[n].id!=="src")setTimeout(()=>render(n,true),900)}
 }
 function sayOnce(t){if(!synth)return;stopAudio();const u=new SpeechSynthesisUtterance(t);const v=voice();if(v)u.voice=v;u.rate=.92;synth.speak(u);$("#now").hidden=false;$("#nowt").textContent="Playing…";u.onend=()=>{$("#now").hidden=true}}
 
@@ -205,6 +232,7 @@ function initFC(){fc.o=S.flashcards.map((_,i)=>i);fc.i=0;fc.b=false;drawFC()}
 function drawFC(){const c=S.flashcards[fc.o[fc.i]];const el=$("#fc");el.classList.toggle("back",fc.b);el.querySelector(".fcf").innerHTML=`<small>${fc.b?"ANSWER":"QUESTION"}</small>${esc(fc.b?c.b:c.f)}`;$("#fcn").textContent=`${fc.i+1} / ${fc.o.length}`}
 
 /* ---------- prayer gen ---------- */
+function updCounts(){const sel=new Set(store.get("sel2",[]));S.checklist.forEach((g,gi)=>{const el=document.querySelector(`[data-gc="${gi}"]`);if(!el)return;const n=g.items.filter((_,ii)=>sel.has(gi+"_"+ii)).length;el.textContent=(n?n+" ticked · ":"")+g.items.length+" items"});const c=$("#ckcount");if(c)c.textContent=sel.size?`You have ticked ${sel.size} item${sel.size>1?"s":""}.`:""}
 function updPrayer(){$("#myprayer").innerHTML=`<span class="lbl">🙏🏽 PRAY — repeat after me</span>`+myPrayerLines().map(l=>`<p>${esc(l)}</p>`).join("")}
 
 /* ---------- events ---------- */
@@ -215,7 +243,7 @@ document.addEventListener("click",e=>{
  if(t.dataset.say){sayOnce(t.dataset.say);return}
  if(t.id==="prev")return render(cur-1);if(t.id==="next")return render(cur+1);if(t.id==="homeb")return render(0);
  if(t.id==="nowstop")return stopAudio();
- if(t.id==="theme"){const d=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=d;store.set("theme",d);t.setAttribute("aria-label",d==="dark"?"Switch to day mode":"Switch to night mode");t.textContent=d==="dark"?"☀️ Day":"🌙 Night";return}
+ if(t.id==="theme"){const d=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=d;store.set("theme",d);t.setAttribute("aria-label",d==="dark"?"Switch to day mode":"Switch to night mode");t.textContent=d==="dark"?"💡 Day":"🌙 Night";return}
  if(t.classList.contains("ltab")){const w=t.closest(".levels");w.querySelectorAll(".ltab").forEach(x=>x.classList.toggle("on",x===t));w.querySelectorAll(".lv").forEach(x=>x.classList.toggle("on",x.dataset.lv===t.dataset.lv));return}
  if(t.classList.contains("opt")){const m=t.closest(".mcq");if(m.classList.contains("answered"))return;m.classList.add("answered");const ok=+t.dataset.i===+m.dataset.ans;m.querySelectorAll(".opt").forEach(o=>{if(+o.dataset.i===+m.dataset.ans)o.classList.add("right")});if(!ok)t.classList.add("wrong");const fb=m.querySelector(".fb");fb.hidden=false;fb.querySelector(".fbt").textContent=ok?"✅ Correct":"❌ Not quite — here is why";m.dataset.ok=ok?1:0;
   const qs=document.querySelectorAll('.mcq[data-id^="qz"]');const an=[...qs].filter(x=>x.classList.contains("answered"));if(qs.length&&an.length===qs.length){const sc=an.filter(x=>x.dataset.ok==1).length;$("#score").innerHTML=`<b>Your score: ${sc} / ${qs.length}</b> ${sc===qs.length?"— excellent!":"— review the explanations and try again later."}`;done.add("practice");store.set("done",[...done])}return}
@@ -224,18 +252,23 @@ document.addEventListener("click",e=>{
  if(t.id==="fcx"){fc.i=(fc.i+1)%fc.o.length;fc.b=false;drawFC();return}
  if(t.id==="fcp"){fc.i=(fc.i-1+fc.o.length)%fc.o.length;fc.b=false;drawFC();return}
  if(t.id==="fcr"){fc.o.sort(()=>Math.random()-.5);fc.i=0;fc.b=false;drawFC();return}
- if(t.id==="clearck"){store.set("sel",[]);store.set("extra","");render(cur);return}
+ if(t.id==="clearck"){store.set("sel2",[]);store.set("extra","");render(cur);return}
+ if(t.id==="hfgo"){store.set("hf",true);render(1,true);return}
+ if(t.id==="lvadd"){const n=$("#lvn").value.trim();if(!n){$("#lvn").focus();$("#lvn").placeholder="Please type a name";return}const st=document.querySelector('input[name=lvst]:checked').value;const areas=[...document.querySelectorAll("[data-area]:checked")].map(x=>AREAS[+x.dataset.area]);const L=store.get("loved",[]);L.push({n,st,areas,other:$("#lvo").value.trim(),j:[],ans:false});store.set("loved",L);done.add("loved");store.set("done",[...done]);render(cur);setTimeout(()=>{const c=document.querySelectorAll(".lvp");c[c.length-1]&&c[c.length-1].scrollIntoView({block:"start"})},50);return}
+ if(t.dataset.lvsave){const i=+t.dataset.lvsave;const ta=document.querySelector(`[data-lvj="${i}"]`);const v=ta.value.trim();if(!v)return;const L=store.get("loved",[]);(L[i].j=L[i].j||[]).unshift({d:new Date().toLocaleDateString(),t:v});store.set("loved",L);render(cur);document.querySelectorAll(".lvp")[i].scrollIntoView({block:"start"});return}
+ if(t.dataset.lvans){const i=+t.dataset.lvans;const L=store.get("loved",[]);L[i].ans=!L[i].ans;store.set("loved",L);render(cur);document.querySelectorAll(".lvp")[i].scrollIntoView({block:"start"});return}
+ if(t.dataset.lvdel){const i=+t.dataset.lvdel;const L=store.get("loved",[]);if(!confirm("Remove "+L[i].n+" and their journal from this phone?"))return;L.splice(i,1);store.set("loved",L);render(cur);return}
 });
 document.addEventListener("change",e=>{
  const t=e.target;
  if(t.id==="hfree"){store.set("hf",t.checked);return}
- if(t.dataset.ck){const s=new Set(store.get("sel",[]));t.checked?s.add(t.dataset.ck):s.delete(t.dataset.ck);store.set("sel",[...s]);updPrayer();if(s.size){done.add("check");store.set("done",[...done])}}
+ if(t.dataset.ck){const s=new Set(store.get("sel2",[]));t.checked?s.add(t.dataset.ck):s.delete(t.dataset.ck);store.set("sel2",[...s]);updPrayer();updCounts();if(s.size){done.add("check");store.set("done",[...done])}}
 });
-document.addEventListener("input",e=>{const t=e.target;if(t.id==="extra"){store.set("extra",t.value);updPrayer()}if(t.dataset.k)store.set(t.dataset.k,t.value)});
+document.addEventListener("input",e=>{const t=e.target;if(t.dataset.srch){const q=t.value.toLowerCase().trim();document.querySelectorAll(`.cks[data-g="${t.dataset.srch}"] .ck`).forEach(l=>{l.hidden=q&&!l.dataset.t.includes(q)})}if(t.id==="extra"){store.set("extra",t.value);updPrayer()}if(t.dataset.k)store.set(t.dataset.k,t.value)});
 
 const LOGO=`<svg viewBox="0 0 64 64" width="64" height="64" aria-label="Only One God mark" fill="none"><circle cx="32" cy="32" r="29" stroke="currentColor" stroke-width="3"/><path d="M32 12v40M20 24h24" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="32" r="6" fill="currentColor" opacity=".25"/></svg>`;
 
-const th=store.get("theme",null)||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=th;$("#theme").textContent=th==="dark"?"☀️ Day":"🌙 Night";
+const th=store.get("theme",null)||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=th;$("#theme").textContent=th==="dark"?"💡 Day":"🌙 Night";
 if(synth&&synth.onvoiceschanged!==undefined)synth.onvoiceschanged=()=>{};
 const h=location.hash.slice(1);const si=SCREENS.findIndex(s=>s.id===h);render(si>0?si:0);
 window.__T={render,SCREENS,queueFor,A:()=>A};
