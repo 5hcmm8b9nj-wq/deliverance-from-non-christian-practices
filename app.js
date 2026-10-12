@@ -68,7 +68,7 @@ function rHome(){
  const tiles=S.parts.map(p=>`<div class="partb"><p class="eyebrow">${p.n?"Part "+p.n:"Reference"}</p><h3 class="ptitle">${esc(p.t)}</h3><p class="small">${esc(p.d)}</p><div class="tiles">${SCREENS.filter(s=>s.part===p.n).map(tile).join("")}</div></div>`).join("");
   return `<section class="hero"><div class="hero-mark">${LOGO}</div><p class="eyebrow">Christian deliverance study</p><h1>${esc(S.title)}</h1><p class="sub">${esc(S.subtitle)}</p></section>
  <div class="card intro"><h2 class="h2" style="margin-top:0">Welcome — what is in this app</h2>
- <p>This study helps you recognize non-Christian practices and religions, break with them, and stay free in Jesus Christ. It answers every practice with the full King James Bible and the exact words of two well-known deliverance teachers, Derek Prince and Neil T. Anderson. It began with two Gaia videos on Atlantis, the Akashic records and \"higher gods,\" and now covers ${TOTAL} practices, religions, programs, societies, objects and vows.</p>
+ <p>This study helps you recognize non-Christian practices and religions, break with them, and stay free in Jesus Christ. It answers every practice with the full King James Bible and the exact words of two well-known deliverance teachers, Derek Prince and Neil T. Anderson. It covers ${TOTAL} practices, religions, programs, societies, objects and vows.</p>
  <p><b>The study follows the order of Christian deliverance ministry, in five parts:</b></p>
  <ol class="introlist">
   <li><b>Part 1 · Begin Here</b> — an opening prayer, how deliverance works (Derek Prince's nine steps), and the teachers' own words.</li>
