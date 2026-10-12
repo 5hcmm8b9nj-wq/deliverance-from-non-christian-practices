@@ -67,18 +67,11 @@ function rHome(){
  const tile=(s)=>{const i=SCREENS.indexOf(s);return `<button class="tile ${done.has(s.id)?"done":""}" data-go="${i}"><span class="tn">${s.lesson?s.lesson.num:"•"}</span><span class="tt">${esc(s.short||s.t)}</span>${done.has(s.id)?'<span class="tick">✓</span>':""}</button>`};
  const tiles=S.parts.map(p=>`<div class="partb"><p class="eyebrow">${p.n?"Part "+p.n:"Reference"}</p><h3 class="ptitle">${esc(p.t)}</h3><p class="small">${esc(p.d)}</p><div class="tiles">${SCREENS.filter(s=>s.part===p.n).map(tile).join("")}</div></div>`).join("");
   return `<section class="hero"><div class="hero-mark">${LOGO}</div><p class="eyebrow">Christian deliverance study</p><h1>${esc(S.title)}</h1><p class="sub">${esc(S.subtitle)}</p></section>
- <div class="card intro"><h2 class="h2" style="margin-top:0">Welcome — what is in this app</h2>
+ <div class="card intro"><h2 class="h2" style="margin-top:0">📋 Contents: what this manual covers</h2>
  <p>This study helps you recognize non-Christian practices and religions, break with them, and stay free in Jesus Christ. It answers every practice with the full King James Bible and the exact words of two well-known deliverance teachers, Derek Prince and Neil T. Anderson. It covers ${TOTAL} practices, religions, programs, societies, objects and vows.</p>
- <p><b>The study follows the order of Christian deliverance ministry, in five parts:</b></p>
- <ol class="introlist">
-  <li><b>Part 1 · Begin Here</b> — an opening prayer, how deliverance works (Derek Prince's nine steps), and the teachers' own words.</li>
-  <li><b>Part 2 · Know the Truth</b> — Lessons 1 to 3: who God is, the oldest lie, and the spirit of antichrist. God's Word comes first.</li>
-  <li><b>Part 3 · Recognize the Counterfeits</b> — Lessons 4 to 10: the Gaia videos, the Akashic records, star beings, the occult, Eastern religions, secret societies, and family lines. Then the Index, with an introduction to each of the ${S.checklist.length} groups.</li>
-  <li><b>Part 4 · The Steps to Freedom</b> — Steps 1 to 5 to prepare your heart, Lesson 11 (the clean break), the renunciation checklist (Step 6), and the ${S.deliverance.length}-part deliverance prayer for Steps 6 to 9.</li>
-  <li><b>Part 5 · Stay Free</b> — declarations, prayer for loved ones, practice, and review and aftercare.</li>
- </ol>
- <p><b>How to use it:</b> tap 🔊 Play on any section to listen, or use hands-free to hear the whole study. Switch 💡 Day / 🌙 Night at the top. Your progress, checklist, answers and loved ones are saved only on this phone. Nothing is sent anywhere.</p>
- <p class="small">Watching the Gaia videos is not required. Each lesson summarises what they claim.</p></div>
+ ${S.parts.map(p=>`<div class="toc"><h3>${p.n?"Part "+p.n+" · ":""}${esc(p.t)}</h3><p class="small">${esc(p.d)}</p><ol class="tocl">${SCREENS.filter(x=>x.part===p.n).map(x=>`<li><a href="#${x.id}" data-go="${SCREENS.indexOf(x)}">${esc(x.t)}</a></li>`).join("")}</ol></div>`).join("")}
+ <div class="toc"><h3>Practices and religions covered (${TOTAL})</h3><ol class="tocl cats">${Object.keys(S.cats).map(k=>{const gs=S.checklist.filter(g=>g.cat===k);return `<li><b>${esc(S.cats[k].t)}</b> <span class="small">(${gs.reduce((n,g)=>n+g.items.length,0)} items · ${esc(S.cats[k].l)})</span><br><span class="small">${gs.map(g=>esc(g.g)).join(" · ")}</span></li>`}).join("")}</ol></div>
+ <p><b>How to use it:</b> tap 🔊 Play on any section to listen, or use hands-free to hear the whole study. Switch 💡 Day / 🌙 Night at the top. Your progress, checklist, answers and loved ones are saved only on this phone. Nothing is sent anywhere.</p></div>
  <div class="hf card"><label class="sw"><input type="checkbox" id="hfree" ${store.get("hf",false)?"checked":""}><span></span></label><div><b>Hands-free mode</b><br><span class="small">When a section finishes playing, the next section starts by itself.</span></div></div>
  <button class="big hfgo" id="hfgo">🎧 Listen hands-free to the whole study</button>
  <h2 class="h2">Choose a section</h2>${tiles}

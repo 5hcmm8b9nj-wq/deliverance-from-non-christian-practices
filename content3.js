@@ -17,16 +17,20 @@ Object.assign(S.sources,{
 S.parts=[
  {n:1,t:"Begin Here",d:"Open in prayer, learn how deliverance works, and hear the teachers."},
  {n:2,t:"Know the Truth",d:"Build on God's Word first: who God is, the oldest lie, and the spirit of antichrist."},
- {n:3,t:"Recognize the Counterfeits",d:"Learn what each practice and religion is, and what the Bible says about it."},
+ {n:3,t:"Recognize the Counterfeits",d:"One category at a time, learn what each non-Christian practice and religion is and what the Bible says about it: the occult, Eastern religions, New Age teachings, false religions and secret societies, and family lines. The Index introduces all 17 groups."},
  {n:4,t:"The Steps to Freedom",d:"Walk through Derek Prince's nine steps: prepare your heart, break with the occult, be released, take your stand, and expel."},
  {n:5,t:"Stay Free",d:"Declare the Word, pray for loved ones, practice, and follow the aftercare."},
  {n:0,t:"Reference",d:"Plain-language meanings and every source used."}
 ];
 
 /* ---------- Lesson order and numbering ---------- */
-const LORDER=[["l2",2],["l3",2],["l7",2],["l1",3],["l4",3],["l5",3],["l8",3],["l9",3],["l10",3],["l11",3],["l6",4]];
+const LORDER=[["l2",2],["l3",2],["l7",2],["l8",3],["l9",3],["l1",3],["l4",3],["l5",3],["l10",3],["l11",3],["l6",4]];
 S.lessons=LORDER.map(([id,p],i)=>{const l=S.lessons.find(x=>x.id===id);l.num=i+1;l.part=p;return l});
 S.lessons.find(l=>l.id==="l6").step="Step 6 teaching";
+const lz=id=>S.lessons.find(l=>l.id===id);
+lz("l1").title="New Age Teachings: Atlantis and the Gaia Videos";
+lz("l2").intro="A popular New Age teaching says the Elohim were many beings who \"formed life in higher dimensions.\" The Bible uses the same word for the one living God. Read what Scripture says about who Elohim really is.";
+lz("l3").intro="Many New Age teachings promise that people can become gods and find divine power in their own blood and DNA. The Bible shows us where this idea first came from.";
 
 /* ---------- Opening prayer (Begin Here) and Steps 1-5 (Prepare Your Heart) ---------- */
 const op=S.opening;
@@ -125,7 +129,7 @@ const INTRO={
  4:{c:"B",a:"Divination is trying to learn the future or hidden things through cards, stars, signs, numbers or spirits. Spirit contact is trying to speak with the dead or with spirits.",r:["Leviticus 19:31"]},
  5:{c:"B",a:"Witchcraft uses spells, rituals and spiritual power to control people or events. Derek Prince defined it as \"the attempt to control people and make them do what you want by a power other than the Holy Spirit.\"",r:["Galatians 5:19-21"]},
  7:{c:"C",a:"These are religions from Asia, such as Hinduism, Buddhism, Taoism and Shinto, and practices drawn from them, such as mantras, chanting and meditation to empty the mind. They bow to other gods or to no god.",r:["Isaiah 2:6-8"]},
- 8:{c:"C",a:"These are groups that deny that Jesus Christ is God come in the flesh, add another book or prophet above the Bible, or teach salvation by another way.",r:["Galatians 1:8-9"]},
+ 8:{c:"D",a:"These are groups that deny that Jesus Christ is God come in the flesh, add another book or prophet above the Bible, or teach salvation by another way.",r:["Galatians 1:8-9"]},
  9:{c:"D",a:"Secret societies are lodges and orders that require secret initiations, oaths and rituals, such as Freemasonry. Derek Prince called Freemasonry \"a source of the most tremendous demonic problems\" that \"goes from generation to generation.\"",r:["Matthew 5:34-37"]},
  11:{c:"D",a:"A vow, covenant or dedication is a binding promise. These are promises made to a spirit, a god, a group or a person outside of Christ, by you or by someone on your behalf.",r:["James 5:12"]},
  16:{c:"E",a:"Encyclopaedia Britannica explains that in many African religions prayers and sacrifices are directed to lesser divinities and ancestors rather than to the Supreme Being, through priests, diviners and shrines. Many people were dedicated to these as babies, at funerals or at festivals without knowing it.",r:["Jeremiah 2:27-28","Ezekiel 13:18-20"]},
@@ -133,13 +137,13 @@ const INTRO={
  10:{c:"F",a:"These are objects linked to other gods, the occult or superstition, such as idols, charms, crystals, masks and occult books. Derek Prince taught that you must \"get rid of all contact objects.\"",r:["Deuteronomy 7:25-26","Isaiah 30:22"]}
 };
 S.cats={
- A:{t:"New Age teachings, channelling and media",l:"Lessons 4 to 6"},
- B:{t:"The occult: divination, spirit contact and witchcraft",l:"Lesson 7"},
- C:{t:"Eastern religions, false religions and cults",l:"Lesson 8"},
- D:{t:"Secret societies, oaths and vows",l:"Lesson 9"},
+ B:{t:"The occult: divination, spirit contact and witchcraft",l:"Lesson 4"},
+ C:{t:"Eastern religions",l:"Lesson 5"},
+ A:{t:"New Age teachings, channelling and media",l:"Lessons 6 to 8"},
+ D:{t:"False religions, cults, secret societies and vows",l:"Lesson 9"},
  E:{t:"Ancestral and traditional spirit worship",l:"Lesson 10"},
  F:{t:"Clean the house: objects",l:"Lesson 11"}
 };
-const DORDER=[1,6,12,13,14,0,2,3,4,5,7,8,9,11,16,15,10];
+const DORDER=[2,3,4,5,7,6,12,1,13,14,0,8,9,11,16,15,10];
 S.checklist=DORDER.map(o=>{const g=S.checklist.find(x=>x.o===o);g.about=INTRO[o].a;g.refs=INTRO[o].r;g.cat=INTRO[o].c;return g});
 })();

@@ -145,3 +145,6 @@ details>summary{cursor:pointer;list-style:none;min-height:44px}details>summary::
 [data-theme=dark] .chip{background:#5A1220}
 .itab tr.catr td{font-weight:800;background:var(--soft);color:var(--red)}
 .ladder.nine li{align-items:flex-start}.ladder.nine small{color:var(--mute)}
+.toc{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}.toc h3{font-family:Fraunces,serif;font-size:19px;margin:0 0 2px;color:var(--red)}
+.toc .small{margin:0 0 6px}.tocl{margin:0;padding-left:22px}.tocl li{margin:4px 0}.tocl a{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-color:var(--goldb);text-underline-offset:3px}
+.tocl.cats li{margin:8px 0}
