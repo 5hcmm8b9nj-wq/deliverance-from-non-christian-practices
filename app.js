@@ -5,21 +5,29 @@ const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const store={get(k,d){try{return JSON.parse(localStorage.getItem("o1g_"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("o1g_"+k,JSON.stringify(v))}catch(e){}}};
 
 /* ---------- screens ---------- */
+const L=p=>S.lessons.filter(l=>l.part===p&&l.id!=="l6").map(l=>({id:l.id,t:`Lesson ${l.num}: ${l.title}`,short:l.title,lesson:l,part:p}));
+const L6=S.lessons.find(l=>l.id==="l6");
 const SCREENS=[
  {id:"home",t:"Home"},
- {id:"open",t:"Before We Begin",short:"Begin"},
- {id:"teach",t:"What the Deliverance Teachers Say",short:"Teachers"},
- ...S.lessons.map(l=>({id:l.id,t:`Lesson ${l.num}: ${l.title}`,short:l.title,lesson:l})),
- {id:"index",t:"Index of Non-Christian Practices",short:"Practices Index"},
- {id:"check",t:"My Renunciation Checklist",short:"Checklist"},
- {id:"pray",t:"Repeat-After-Me Deliverance Prayer",short:"Deliverance Prayer"},
- {id:"declare",t:"Fiery Declarations",short:"Declarations"},
- {id:"loved",t:"Pray for My Loved Ones",short:"Loved Ones"},
- {id:"practice",t:"Practice: Flashcards, Quiz and Scenarios",short:"Practice"},
- {id:"review",t:"Review and Aftercare",short:"Review"},
- {id:"gloss",t:"Plain-Language Glossary",short:"Glossary"},
- {id:"src",t:"Sources",short:"Sources"}
+ {id:"open",t:"Before We Begin: Opening Prayer",short:"Opening Prayer",part:1},
+ {id:"steps",t:"How Deliverance Works",short:"How Deliverance Works",part:1},
+ {id:"teach",t:"What the Deliverance Teachers Say",short:"The Teachers",part:1},
+ ...L(2),
+ ...L(3),
+ {id:"index",t:"Index of Non-Christian Practices",short:"Practices Index",part:3},
+ {id:"prep",t:"Steps 1–5: Prepare Your Heart",short:"Steps 1–5: Prepare Your Heart",part:4},
+ {id:L6.id,t:`Lesson ${L6.num}: ${L6.title}`,short:"Step 6: "+L6.title,lesson:L6,part:4},
+ {id:"check",t:"Step 6: My Renunciation Checklist",short:"Step 6: Renunciation Checklist",part:4},
+ {id:"pray",t:"Steps 6–9: Repeat-After-Me Deliverance Prayer",short:"Steps 6–9: Deliverance Prayer",part:4},
+ {id:"declare",t:"Fiery Declarations",short:"Declarations",part:5},
+ {id:"loved",t:"Pray for My Loved Ones",short:"Loved Ones",part:5},
+ {id:"practice",t:"Practice: Flashcards, Quiz and Scenarios",short:"Practice",part:5},
+ {id:"review",t:"Review and Aftercare",short:"Review and Aftercare",part:5},
+ {id:"gloss",t:"Plain-Language Glossary",short:"Glossary",part:0},
+ {id:"src",t:"Sources",short:"Sources",part:0}
 ];
+const PART=n=>S.parts.find(p=>p.n===n);
+const BYO={};S.checklist.forEach(g=>BYO[g.o]=g);
 let cur=0;
 const done=new Set(store.get("done",[]));
 
@@ -56,33 +64,39 @@ test:`<ol class="tests"><li><b>Does it confess Jesus Christ</b> as Lord and the 
 
 /* ---------- renderers ---------- */
 function rHome(){
- const tiles=SCREENS.slice(1).map((s,i)=>`<button class="tile ${done.has(s.id)?"done":""}" data-go="${i+1}"><span class="tn">${s.lesson?s.lesson.num:"•"}</span><span class="tt">${esc(s.short||s.t)}</span>${done.has(s.id)?'<span class="tick">✓</span>':""}</button>`).join("");
-  return `<section class="hero"><div class="hero-mark">${LOGO}</div><p class="eyebrow">Christian deliverance study</p><h1>Only One God</h1><p class="sub">Freedom from Atlantis myths, the Akashic records, and "higher gods" teachings</p></section>
+ const tile=(s)=>{const i=SCREENS.indexOf(s);return `<button class="tile ${done.has(s.id)?"done":""}" data-go="${i}"><span class="tn">${s.lesson?s.lesson.num:"•"}</span><span class="tt">${esc(s.short||s.t)}</span>${done.has(s.id)?'<span class="tick">✓</span>':""}</button>`};
+ const tiles=S.parts.map(p=>`<div class="partb"><p class="eyebrow">${p.n?"Part "+p.n:"Reference"}</p><h3 class="ptitle">${esc(p.t)}</h3><p class="small">${esc(p.d)}</p><div class="tiles">${SCREENS.filter(s=>s.part===p.n).map(tile).join("")}</div></div>`).join("");
+  return `<section class="hero"><div class="hero-mark">${LOGO}</div><p class="eyebrow">Christian deliverance study</p><h1>${esc(S.title)}</h1><p class="sub">${esc(S.subtitle)}</p></section>
  <div class="card intro"><h2 class="h2" style="margin-top:0">Welcome — what is in this app</h2>
- <p>This is a Christian deliverance study for your phone. It began with two Gaia videos featuring Matias De Stefano, on Atlantis, the "rise of the gods," the Akashic records and the claim that "Elohim" were many cosmic beings. It answers them, and every other practice listed here, with the full King James Bible and the exact words of two well-known deliverance teachers, Derek Prince and Neil T. Anderson.</p>
- <p><b>The app is arranged in this order:</b></p>
+ <p>This study helps you recognize non-Christian practices and religions, break with them, and stay free in Jesus Christ. It answers every practice with the full King James Bible and the exact words of two well-known deliverance teachers, Derek Prince and Neil T. Anderson. It began with two Gaia videos on Atlantis, the Akashic records and \"higher gods,\" and now covers ${TOTAL} practices, religions, programs, societies, objects and vows.</p>
+ <p><b>The study follows the order of Christian deliverance ministry, in five parts:</b></p>
  <ol class="introlist">
-  <li><b>Before We Begin</b> — praise, asking God to reveal, confessing faith in Christ, confession, forgiveness, inviting the Holy Spirit.</li>
-  <li><b>What the Deliverance Teachers Say</b> — exact quotes from Derek Prince and Neil T. Anderson.</li>
-  <li><b>11 Lessons</b> — the Gaia videos, Elohim, the oldest lie, the Akashic records, star beings, the clean break, the spirit of antichrist, the occult, Eastern religions, secret societies, and family-line curses. Each has full KJV Scripture, a short explanation at four levels, a question, a prayer and a declaration.</li>
-  <li><b>Index of Non-Christian Practices</b> — every practice in the tool, ${TOTAL} in all, arranged in ${S.checklist.length} groups.</li>
-  <li><b>My Renunciation Checklist</b> — tick what applies and your renunciation prayer builds itself.</li>
-  <li><b>Repeat-After-Me Deliverance Prayer</b> — ${S.deliverance.length} parts.</li>
-  <li><b>Fiery Declarations</b></li>
-  <li><b>Pray for My Loved Ones</b> — a Scripture prayer and prayer journal for each person.</li>
-  <li><b>Practice</b> — flashcards, quiz and "What would you do?"</li>
-  <li><b>Review and Aftercare</b>, <b>Plain-Language Glossary</b> and <b>Sources</b>.</li>
+  <li><b>Part 1 · Begin Here</b> — an opening prayer, how deliverance works (Derek Prince's nine steps), and the teachers' own words.</li>
+  <li><b>Part 2 · Know the Truth</b> — Lessons 1 to 3: who God is, the oldest lie, and the spirit of antichrist. God's Word comes first.</li>
+  <li><b>Part 3 · Recognize the Counterfeits</b> — Lessons 4 to 10: the Gaia videos, the Akashic records, star beings, the occult, Eastern religions, secret societies, and family lines. Then the Index, with an introduction to each of the ${S.checklist.length} groups.</li>
+  <li><b>Part 4 · The Steps to Freedom</b> — Steps 1 to 5 to prepare your heart, Lesson 11 (the clean break), the renunciation checklist (Step 6), and the ${S.deliverance.length}-part deliverance prayer for Steps 6 to 9.</li>
+  <li><b>Part 5 · Stay Free</b> — declarations, prayer for loved ones, practice, and review and aftercare.</li>
  </ol>
  <p><b>How to use it:</b> tap 🔊 Play on any section to listen, or use hands-free to hear the whole study. Switch 💡 Day / 🌙 Night at the top. Your progress, checklist, answers and loved ones are saved only on this phone. Nothing is sent anywhere.</p>
  <p class="small">Watching the Gaia videos is not required. Each lesson summarises what they claim.</p></div>
  <div class="hf card"><label class="sw"><input type="checkbox" id="hfree" ${store.get("hf",false)?"checked":""}><span></span></label><div><b>Hands-free mode</b><br><span class="small">When a section finishes playing, the next section starts by itself.</span></div></div>
  <button class="big hfgo" id="hfgo">🎧 Listen hands-free to the whole study</button>
- <h2 class="h2">Choose a section</h2><div class="tiles">${tiles}</div>
+ <h2 class="h2">Choose a section</h2>${tiles}
  `;
 }
 function rOpen(){
- return audioBar("open","Listen and pray along")+`<p class="lead">Before teaching, we follow a simple order: praise, confession, forgiveness, and inviting the Holy Spirit.</p>`+
- S.opening.map((o,i)=>`<div class="card step"><div class="stepn">${i+1}</div><h3>${esc(o.t)}</h3>${scr(o.r)}<div class="praycard"><span class="lbl">🙏🏽 PRAY</span><p>${esc(o.p)}</p>${o.by?`<p class="by">— ${esc(o.by)}</p>${srcLink(o.s)}`:""}</div></div>`).join("");
+ return audioBar("open","Listen and pray along")+S.opening.map((o,i)=>`<div class="card step"><div class="stepn">${i+1}</div><h3>${esc(o.t)}</h3>${scr(o.r)}<div class="praycard"><span class="lbl">🙏🏽 PRAY</span><p>${esc(o.p)}</p>${o.by?`<p class="by">— ${esc(o.by)}</p>${srcLink(o.s)}`:""}</div></div>`).join("");
+}
+function rSteps(){
+ let h=audioBar("steps","🔊 Listen to how deliverance works");
+ h+=`<div class="card"><h3>Derek Prince's nine steps</h3><p class="small">"So there are nine conditions that I find people have to make in order to be delivered."</p><ol class="ladder nine">${S.nine.map((n,i)=>`<li data-line="nine_${i}"><span>${i+1}</span><div><b>${esc(n[0])}</b><br><small>In this app: ${esc(n[1])}</small></div></li>`).join("")}</ol>${srcLink("s443")}</div>`;
+ h+=`<div class="card"><h3>Four words for breaking a curse</h3><p class="chips">${S.fourRE.map(w=>`<span class="chip">${w}</span>`).join("")}</p><blockquote class="tq">"Recognize, repent, renounce, resist."<cite>— Derek Prince</cite></blockquote>${srcLink("s80")}</div>`;
+ h+=`<div class="card"><h3>Where the occult fits</h3><blockquote class="tq">"The first Step to freedom in Christ is to renounce your previous or current involvement with satanically-inspired occult practices and false cults and religions."<cite>— Neil T. Anderson</cite></blockquote>${srcLink("na")}<p>That is why this study teaches the truth first, then helps you recognize each counterfeit, and then leads you to renounce them one by one.</p></div>`;
+ h+=`<h3 class="h3">📖 Read it — full KJV</h3>`+refsInline(["James 4:7","Mark 16:17","John 8:36"]);
+ return h;
+}
+function rPrep(){
+ return audioBar("prep","🙏🏽 Pray Steps 1 to 5")+S.prep.map((o,i)=>`<div class="card step"><div class="stepn">${i+1}</div><h3>${esc(o.t)}</h3><blockquote class="tq">"${esc(o.q)}"<cite>— Derek Prince</cite></blockquote>${srcLink(o.s)}${scr(o.r)}${o.r2?scr(o.r2):""}<div class="praycard"><span class="lbl">🙏🏽 PRAY — repeat after me</span><p data-line="prep_${i}">${esc(o.p)}</p>${o.by?`<p class="by">— ${esc(o.by)}</p>${srcLink(o.ps)}`:""}</div></div>`).join("");
 }
 function levelTabs(l){
  const L=l.levels;const keys=[["simple","👦🏽 Simple"],["teen","🧑🏽 Teen"],["adult","👩🏽 Adult"],["deep","🎓 Deeper Study"]];
@@ -115,39 +129,41 @@ function rLesson(l){
 function ladder(steps){return `<ol class="ladder">${steps.map((s,i)=>`<li><span>${i+1}</span>${esc(s)}</li>`).join("")}</ol>`}
 function rCheck(){
  const sel=new Set(store.get("sel2",[]));
- let h=`<p class="lead">Tick everything you have been involved in, even if you only watched or took part "for fun." Your prayer builds itself at the bottom. Nothing leaves this phone.</p>`;
+ let h=`<p class="lead">Tick it even if you only watched or took part "for fun."</p>`;
  h+=`<blockquote class="tq">"Even if you innocently participated in something or observed it, you should write it on your list to renounce, just in case you unknowingly gave Satan a foothold."<cite>— Neil T. Anderson</cite></blockquote>${srcLink("na")}`;
  h+=`<p class="small" id="ckcount"></p>`;
- h+=S.checklist.map((g,gi)=>{const n=g.items.filter((_,ii)=>sel.has(gi+"_"+ii)).length;return `<details class="card grp" ${gi===0?"":""}><summary><span class="gt">${esc(g.g)}</span><span class="gc" data-gc="${gi}">${n?n+" ticked · ":""}${g.items.length} items</span></summary>${g.src?`<p class="small">Source: ${srcLink(g.src)}</p>`:""}${g.search?`<input class="srch" type="search" data-srch="${gi}" placeholder="Search ${g.items.length} programs" autocomplete="off" autocapitalize="off" spellcheck="false">`:""}<div class="cks" data-g="${gi}">${g.items.map((it,ii)=>{const k=gi+"_"+ii;return `<label class="ck" data-t="${esc(it.toLowerCase())}"><input type="checkbox" data-ck="${k}" ${sel.has(k)?"checked":""}><span>${esc(it)}</span></label>`}).join("")}</div></details>`}).join("");
+ h+=S.checklist.map((g,gi)=>{const n=g.items.filter((_,ii)=>sel.has(g.o+"_"+ii)).length;return catHead(g,gi)+`<details class="card grp" ${gi===0?"":""}><summary><span class="gt">${esc(g.g)}</span><span class="gc" data-gc="${gi}">${n?n+" ticked · ":""}${g.items.length} items</span></summary>${about(g)}${g.src?`<p class="small">Source: ${srcLink(g.src)}</p>`:""}${g.search?`<input class="srch" type="search" data-srch="${gi}" placeholder="Search ${g.items.length} programs" autocomplete="off" autocapitalize="off" spellcheck="false">`:""}<div class="cks" data-g="${gi}">${g.items.map((it,ii)=>{const k=g.o+"_"+ii;return `<label class="ck" data-t="${esc(it.toLowerCase())}"><input type="checkbox" data-ck="${k}" ${sel.has(k)?"checked":""}><span>${esc(it)}</span></label>`}).join("")}</div></details>`}).join("");
  h+=`<div class="card"><label class="fl" for="extra">Anything not listed: teachers, readers, books, apps, groups (optional)</label><textarea id="extra" rows="2" placeholder="Separate with commas">${esc(store.get("extra",""))}</textarea></div>`;
  h+=`<h3 class="h3">🙏🏽 My personal renunciation</h3><p class="small">Prayer format from Neil T. Anderson's Steps to Freedom in Christ, with Derek Prince's confession of faith.</p>`+audioBar("check","🗣️ Pray your list aloud")+`<div id="myprayer" class="praycard big-p"></div>`;
  h+=`<details class="card"><summary><b>Special renunciations: Kingdom of Darkness → Kingdom of Light</b><br><span class="small">For anyone who was in satanic ritual or heavy occult activity (Neil T. Anderson)</span></summary>${audioBar("kg","🗣️ Renounce and announce")}${S.kingdom.map((r,i)=>`<div class="kg"><p class="kd" data-line="kg_${i}a">${esc(r[0])}</p><p class="kl" data-line="kg_${i}b">${esc(r[1])}</p></div>`).join("")}${srcLink("na")}</details>`;
  h+=`<button class="ab" id="clearck">Clear my checklist</button>`;
  return h;
 }
-function selItems(){const sel=store.get("sel2",[]);return sel.map(k=>{const[g,i]=k.split("_").map(Number);const G=S.checklist[g];if(!G||!G.items[i])return null;return G.search?`watching the Gaia program "${G.items[i]}"`:lc(G.items[i])}).filter(Boolean)}
+function catHead(g,gi){const p=S.checklist[gi-1];if(p&&p.cat===g.cat)return "";const c=S.cats[g.cat];return `<h3 class="cathead"><span class="eyebrow">${esc(c.l)}</span>${esc(c.t)}</h3>`}
+function about(g){return g.about?`<div class="about"><p><b>What it is:</b> ${esc(g.about)}</p><details class="rc"><summary>📖 What the Bible says (KJV)</summary>${refsInline(g.refs)}</details></div>`:""}
+function selItems(){const sel=store.get("sel2",[]);return sel.map(k=>{const[g,i]=k.split("_").map(Number);const G=BYO[g];if(!G||!G.items[i])return null;return G.search?`watching the Gaia program "${G.items[i]}"`:lc(G.items[i])}).filter(Boolean)}
 function myPrayerLines(){
  const ex=(store.get("extra","")||"").split(",").map(s=>s.trim()).filter(Boolean);
  const items=selItems().concat(ex);
  if(!items.length) return ["Tick the items that apply to you, and your prayer will appear here."];
  return ["Lord Jesus Christ, I believe that you are the Son of God, that you died on the cross for my sin and rose again from the dead.",...items.map(i=>`Lord, I confess that I have participated in ${i}, and I renounce ${i}. Thank you that in Christ I am forgiven.`),"I break every contact, and I will get rid of every object connected with these things.","Holy Spirit, fill every place that was given to them. I belong to Jesus Christ alone. Amen."];
 }
-const PROPER=/^("?)(Matias|Atlantis|Arcturians|Pleiadians|Sirians|Orion|Anunnaki|Bashar|Ouija|Dungeons|Magic|Tarot|ESP|Akashic|I|Bloody|Voodoo|Santería|Obeah|Juju|Satanism|Luciferianism|Kabbalah|Hermetic|Reiki|Kundalini|Human|Gene|Silva|The|Science|Hinduism|Buddhism|Tibetan|Zen|Taoism|Jainism|Shinto|Hare|Transcendental|Falun|Osho|Sai|Self-Realization|Eckankar|Christian|Unity|Unification|Mormonism|Church|Jehovah's|Children|Bahaism|Rosicrucianism|Roy|Father|Theosophical|Islam|Black|Humanism|Scientology|Gnosticism|Freemasonry|Order|Shriners|DeMolay|Job's|Knights|Masonic|Japa|Buddha|Ayurveda|New|God|Sofia|Mother|Gaia|Edgar|Wicca|Mindfulness|A Course|A Return|A New|Abraham-Hicks|Ramtha|The|Kryon|Conversations|Channelled|Messages|Oprah|Oprah's|Esther|Super|SuperSoul|Iyanla|Caroline|Shirley|Raymond|Psychic|Crossing|Beyond|Long|Hollywood|Medium|Ghost|YouTube|Orisha|Candomblé|Umbanda|Palo|Espiritismo|Curanderismo|Brujería|Marine|River)\b/;
+const PROPER=/^("?)(Matias|Atlantis|Arcturians|Pleiadians|Sirians|Orion|Anunnaki|Bashar|Ouija|Dungeons|Magic|Tarot|ESP|Akashic|I|Bloody|Voodoo|Santería|Obeah|Juju|Satanism|Luciferianism|Kabbalah|Hermetic|Reiki|Kundalini|Human|Gene|Silva|The|Science|Hinduism|Buddhism|Tibetan|Zen|Taoism|Jainism|Shinto|Hare|Transcendental|Falun|Osho|Sai|Self-Realization|Eckankar|Christian|Unity|Unification|Mormonism|Church|Jehovah's|Children|Bahaism|Rosicrucianism|Roy|Father|Theosophical|Islam|Black|Humanism|Scientology|Gnosticism|Freemasonry|Order|Shriners|DeMolay|Job's|Knights|Masonic|Japa|Buddha|Ayurveda|New|God|Sofia|Mother|Gaia|Edgar|Wicca|Mindfulness|A Course|A Return|A New|Abraham-Hicks|Ramtha|The|Kryon|Conversations|Channelled|Messages|Oprah|Oprah's|Esther|Super|SuperSoul|Iyanla|Caroline|Shirley|Raymond|Psychic|Crossing|Beyond|Long|Hollywood|Medium|Ghost|YouTube|Orisha|Candomblé|Umbanda|Palo|Espiritismo|Curanderismo|Brujería|Marine|River|Akan|Trokosi|Ancestral|Akuaba|Twin|Ogbanje|Babalawo|Ori|Egungun|Ogboni|Poro|Dibia|Ikenga|Osu|Mami|Sangoma|Muthi|Ukuthwasa|Mganga|Zar|Nkisi|Bwiti|Marabout|Sakawa)\b/;
 function lc(i){if(PROPER.test(i))return i;return i.charAt(0)==='"'?'"'+i.charAt(1).toLowerCase()+i.slice(2):i.charAt(0).toLowerCase()+i.slice(1)}
 const TOTAL=S.checklist.reduce((n,g)=>n+g.items.length,0);
 function rIndex(){
  const sel=new Set(store.get("sel2",[]));const nonGaia=S.checklist.filter(g=>!g.search).reduce((n,g)=>n+g.items.length,0);
  let h=`<p class="lead">This is every non-Christian practice, program, religion, society, object and vow in this tool. Tap a group to see every item, or jump straight to it in your checklist.</p>`;
  h+=`<div class="card tot"><div class="totn">${TOTAL}</div><div><b>items in all</b><br><span class="small">${nonGaia} practices, religions, groups, objects and vows<br>+ ${S.checklist.find(g=>g.search).items.length} Gaia programs</span><br><span class="small">Also: ${S.kingdom.length} special Kingdom of Darkness renunciations</span></div></div>`;
- h+=`<table class="itab"><thead><tr><th>#</th><th>Group</th><th>Items</th></tr></thead><tbody>${S.checklist.map((g,i)=>`<tr><td>${i+1}</td><td>${esc(g.g)}</td><td>${g.items.length}</td></tr>`).join("")}<tr class="sum"><td></td><td>Total</td><td>${TOTAL}</td></tr></tbody></table>`;
- h+=S.checklist.map((g,gi)=>`<details class="card grp ix"><summary><span class="gt">${gi+1}. ${esc(g.g)}</span><span class="gc">${g.items.length} items${g.src?" · source: "+esc(S.sources[g.src].n.split(" — ")[0]):""}</span></summary><ol class="ixl">${g.items.map((it,ii)=>`<li class="${sel.has(gi+"_"+ii)?"tk":""}">${esc(it)}</li>`).join("")}</ol><button class="ab" data-jump="${gi}">Go to this group in my checklist ▶</button></details>`).join("");
+ h+=`<table class="itab"><thead><tr><th>#</th><th>Group</th><th>Items</th></tr></thead><tbody>${S.checklist.map((g,i)=>`${!S.checklist[i-1]||S.checklist[i-1].cat!==g.cat?`<tr class="catr"><td colspan="3">${esc(S.cats[g.cat].t)}</td></tr>`:""}<tr><td>${i+1}</td><td>${esc(g.g)}</td><td>${g.items.length}</td></tr>`).join("")}<tr class="sum"><td></td><td>Total</td><td>${TOTAL}</td></tr></tbody></table>`;
+ h+=S.checklist.map((g,gi)=>catHead(g,gi)+`<details class="card grp ix"><summary><span class="gt">${gi+1}. ${esc(g.g)}</span><span class="gc">${g.items.length} items${g.src?" · source: "+esc(S.sources[g.src].n.split(" — ")[0]):""}</span></summary>${about(g)}<ol class="ixl">${g.items.map((it,ii)=>`<li class="${sel.has(g.o+"_"+ii)?"tk":""}">${esc(it)}</li>`).join("")}</ol><button class="ab" data-jump="${gi}">Go to this group in my checklist ▶</button></details>`).join("");
  h+=`<details class="card grp ix"><summary><span class="gt">Special: Kingdom of Darkness → Light</span><span class="gc">${S.kingdom.length} renunciations · Neil T. Anderson</span></summary><ol class="ixl">${S.kingdom.map(k=>`<li>${esc(k[0])}</li>`).join("")}</ol></details>`;
  return h;
 }
 function rTeach(){
  return audioBar("teach","🔊 Hear the teachers' words")+`<p class="lead">These are the exact words of two well-known deliverance teachers. Tap a link to read or hear the full teaching.</p>`+S.teachers.map(t=>`<div class="card"><h3>${esc(t.who)}</h3><p class="small">${esc(t.about)}</p>${t.quotes.map((q,i)=>`<blockquote class="tq" data-line="tq_${esc(t.who)}_${i}">"${esc(q.q)}"</blockquote>${srcLink(q.s)}`).join("")}</div>`).join("");
 }
-const AREAS=["Gaia programs","Atlantis and star-being teachings","Akashic records","occult practices","divination and psychics","witchcraft","New Age practices","Eastern religions","false religions and cults","secret societies and oaths","family-line curses","channelled teachings","Oprah and TV spirituality","psychics and mediums","shamanism and traditional spirit worship"];
+const AREAS=["Gaia programs","Atlantis and star-being teachings","Akashic records","occult practices","divination and psychics","witchcraft","New Age practices","Eastern religions","false religions and cults","secret societies and oaths","family-line curses","channelled teachings","Oprah and TV spirituality","psychics and mediums","shamanism and traditional spirit worship","African traditional spiritual practices"];
 function lovedLines(p){const ar=(p.areas||[]).concat((p.other||"").split(",").map(s=>s.trim()).filter(Boolean));const list=ar.length>1?ar.slice(0,-1).join(", ")+" and "+ar[ar.length-1]:ar[0]||"";return (p.st==="past"?S.loved.past:S.loved.still)(p.n,list)}
 function rLoved(){
  const L=store.get("loved",[]);
@@ -161,7 +177,7 @@ function rLoved(){
 function rPray(){
  let h=`<p class="lead">Read or listen to each line, then say it out loud. When you press Play, each line is spoken and then there is a pause for you to repeat it.</p>`;
  h+=`<div class="card"><label class="fl" for="gap">Repeat pause length</label><select id="gap"><option value="1">Short</option><option value="1.6" selected>Normal</option><option value="2.4">Long</option></select></div>`;
- h+=S.deliverance.map((d,i)=>`<div class="card psec"><h3><span class="pn">${i+1}</span>${esc(d.t)}</h3>${audioBar("p"+i,"🗣️ Repeat after me")}<ol class="lines">${d.lines.map((x,j)=>`<li data-line="p${i}_${j}">${esc(x)}</li>`).join("")}</ol></div>`).join("");
+ h+=S.deliverance.map((d,i)=>`<div class="card psec">${d.step&&(!S.deliverance[i-1]||S.deliverance[i-1].step!==d.step)?`<p class="stepbadge">${esc(d.step)}</p>`:""}<h3><span class="pn">${i+1}</span>${esc(d.t)}</h3>${d.note?`<blockquote class="tq">"${esc(d.note.q)}"<cite>— Derek Prince</cite></blockquote>${srcLink(d.note.s)}`:""}${audioBar("p"+i,"🗣️ Repeat after me")}<ol class="lines">${d.lines.map((x,j)=>`<li data-line="p${i}_${j}">${esc(x)}</li>`).join("")}</ol></div>`).join("");
  return h;
 }
 function rDeclare(){
@@ -183,7 +199,7 @@ function rReview(){
 }
 function rGloss(){return `<p class="lead">Simple meanings for words in this study.</p>`+S.glossary.map(g=>`<details class="gl"><summary>${esc(g.w)}</summary><p>${esc(g.d)}</p></details>`).join("")}
 function rSrc(){
- const s=S.sources;return `<p class="lead">Scripture is from the King James Version. Created prayers, declarations, and scenarios in this study are teaching aids, not quotations.</p><ul class="srcs">${["v1","v2","gaia","s207","s86","s80","s25","s297","s24","r34","r209","na","ficm","britannica","anunnaki","theosophical","cri"].map(k=>`<li><a href="${s[k].u}" target="_blank" rel="noopener">${esc(s[k].n)} ↗</a></li>`).join("")}</ul>`;
+ const s=S.sources;return `<p class="lead">Scripture is from the King James Version. Created prayers, declarations, and scenarios in this study are teaching aids, not quotations.</p><ul class="srcs">${Object.keys(s).filter(k=>s[k].u&&s[k].u!="#").map(k=>`<li><a href="${s[k].u}" target="_blank" rel="noopener">${esc(s[k].n)} ↗</a></li>`).join("")}</ul>`;
 }
 
 /* ---------- navigation ---------- */
@@ -191,8 +207,8 @@ function render(i,auto){
  stopAudio();
  cur=Math.max(0,Math.min(SCREENS.length-1,i));
  const s=SCREENS[cur];let body;
- if(s.id==="home")body=rHome();else if(s.id==="open")body=rOpen();else if(s.id==="teach")body=rTeach();else if(s.id==="index")body=rIndex();else if(s.id==="loved")body=rLoved();else if(s.lesson)body=rLesson(s.lesson);else if(s.id==="check")body=rCheck();else if(s.id==="pray")body=rPray();else if(s.id==="declare")body=rDeclare();else if(s.id==="practice")body=rPractice();else if(s.id==="review")body=rReview();else if(s.id==="gloss")body=rGloss();else body=rSrc();
- $("#main").innerHTML=(s.id==="home"?"":`<header class="ph"><p class="eyebrow">${cur} of ${SCREENS.length-1}</p><h1>${esc(s.t)}</h1></header>`)+body;
+ if(s.id==="home")body=rHome();else if(s.id==="open")body=rOpen();else if(s.id==="steps")body=rSteps();else if(s.id==="prep")body=rPrep();else if(s.id==="teach")body=rTeach();else if(s.id==="index")body=rIndex();else if(s.id==="loved")body=rLoved();else if(s.lesson)body=rLesson(s.lesson);else if(s.id==="check")body=rCheck();else if(s.id==="pray")body=rPray();else if(s.id==="declare")body=rDeclare();else if(s.id==="practice")body=rPractice();else if(s.id==="review")body=rReview();else if(s.id==="gloss")body=rGloss();else body=rSrc();
+ $("#main").innerHTML=(s.id==="home"?"":`<header class="ph"><p class="eyebrow">${s.part?"Part "+s.part+" · "+esc(PART(s.part).t):"Reference"} · ${cur} of ${SCREENS.length-1}</p><h1>${esc(s.t)}</h1></header>${S.intro[s.id]?`<div class="card sintro"><span class="lbl">💡 ABOUT THIS SECTION</span><p>${esc(S.intro[s.id])}</p></div>`:""}`)+body;
  $("#prev").disabled=cur===0;$("#next").disabled=cur===SCREENS.length-1;
  $("#next").textContent=cur===0?"Start ▶":"Next ▶";
  window.scrollTo(0,0);
@@ -211,14 +227,16 @@ const synth=window.speechSynthesis;let A={sec:null,q:[],i:0,paused:false,timer:n
 function voice(){const vs=synth?synth.getVoices():[];return vs.find(v=>/en[-_](US|GB)/i.test(v.lang)&&/Samantha|Daniel|Google|Natural|Aria|Karen/i.test(v.name))||vs.find(v=>/^en/i.test(v.lang))}
 function queueFor(sec){
  const root=document.querySelector(`.abar[data-sec="${sec}"]`);const gap=+(($("#gap")||{}).value||1.6);
- if(sec==="open")return S.opening.flatMap(o=>[{t:o.t},{t:refText(o.r)},{t:"Let us pray. "+o.p}]);
+ if(sec==="open")return [{t:S.intro.open}].concat(S.opening.flatMap(o=>[{t:o.t},{t:refText(o.r)},{t:"Let us pray. "+o.p}]));
+ if(sec==="steps")return [{t:S.intro.steps},{t:"Derek Prince taught nine steps."}].concat(S.nine.map((n,i)=>({t:"Step "+(i+1)+". "+n[0],hl:"nine_"+i})),[{t:"Four words for breaking a curse: recognize, repent, renounce, resist."},{t:refText("James 4:7")},{t:refText("Mark 16:17")},{t:refText("John 8:36")}]);
+ if(sec==="prep")return [{t:S.intro.prep}].concat(S.prep.flatMap((o,i)=>[{t:o.t.replace(" · ",". ")},{t:"Derek Prince said: "+o.q},{t:refText(o.r)}].concat(o.r2?[{t:refText(o.r2)}]:[],[{t:"Repeat after me."},{t:o.p,rep:gap,hl:"prep_"+i}])));
  if(sec==="check")return myPrayerLines().map(t=>({t,rep:gap}));
  if(sec==="kg")return S.kingdom.flatMap((r,i)=>[{t:r[0],rep:gap,hl:"kg_"+i+"a"},{t:r[1],rep:gap,hl:"kg_"+i+"b"}]);
  if(sec==="teach")return S.teachers.flatMap(t=>[{t:t.who+" said:"}].concat(t.quotes.map((q,i)=>({t:q.q,hl:"tq_"+t.who+"_"+i}))));
  if(/^lv\d+$/.test(sec)){const p=store.get("loved",[])[+sec.slice(2)];return p?[{t:"Let us pray for "+p.n+"."}].concat(lovedLines(p).map((t,j)=>({t,hl:sec+"_"+j}))):[]}
  if(sec==="declare")return S.declarations.map((t,i)=>({t,rep:gap,hl:"declare_"+i}));
  if(sec==="review")return [...document.querySelectorAll("#main .three li, #main .after li")].map(e=>({t:e.textContent})).concat([{t:document.querySelector("#main .praycard p").textContent}]);
- if(/^p\d+$/.test(sec)){const d=S.deliverance[+sec.slice(1)];return [{t:d.t}].concat(d.lines.map((t,j)=>({t,rep:gap,hl:sec+"_"+j})))}
+ if(/^p\d+$/.test(sec)){const d=S.deliverance[+sec.slice(1)];return [{t:(d.step?d.step+". ":"")+d.t}].concat(d.lines.map((t,j)=>({t,rep:gap,hl:sec+"_"+j})))}
  const l=S.lessons.find(x=>x.id===sec);if(!l)return[];
  let q=[{t:`Lesson ${l.num}. ${l.title}. ${l.tag}.`},{t:l.intro}];
  if(l.claims)l.claims.forEach(c=>{q.push({t:"The video claims: "+c.c});q.push({t:"What God says: "+c.a});c.refs.forEach(r=>q.push({t:refText(r)}))});
@@ -258,7 +276,7 @@ function initFC(){fc.o=S.flashcards.map((_,i)=>i);fc.i=0;fc.b=false;drawFC()}
 function drawFC(){const c=S.flashcards[fc.o[fc.i]];const el=$("#fc");el.classList.toggle("back",fc.b);el.querySelector(".fcf").innerHTML=`<small>${fc.b?"ANSWER":"QUESTION"}</small>${esc(fc.b?c.b:c.f)}`;$("#fcn").textContent=`${fc.i+1} / ${fc.o.length}`}
 
 /* ---------- prayer gen ---------- */
-function updCounts(){const sel=new Set(store.get("sel2",[]));S.checklist.forEach((g,gi)=>{const el=document.querySelector(`[data-gc="${gi}"]`);if(!el)return;const n=g.items.filter((_,ii)=>sel.has(gi+"_"+ii)).length;el.textContent=(n?n+" ticked · ":"")+g.items.length+" items"});const c=$("#ckcount");if(c)c.textContent=sel.size?`You have ticked ${sel.size} item${sel.size>1?"s":""}.`:""}
+function updCounts(){const sel=new Set(store.get("sel2",[]));S.checklist.forEach((g,gi)=>{const el=document.querySelector(`[data-gc="${gi}"]`);if(!el)return;const n=g.items.filter((_,ii)=>sel.has(g.o+"_"+ii)).length;el.textContent=(n?n+" ticked · ":"")+g.items.length+" items"});const c=$("#ckcount");if(c)c.textContent=sel.size?`You have ticked ${sel.size} item${sel.size>1?"s":""}.`:""}
 function updPrayer(){$("#myprayer").innerHTML=`<span class="lbl">🙏🏽 PRAY — repeat after me</span>`+myPrayerLines().map(l=>`<p>${esc(l)}</p>`).join("")}
 
 /* ---------- events ---------- */
@@ -296,7 +314,7 @@ document.addEventListener("change",e=>{
 });
 document.addEventListener("input",e=>{const t=e.target;if(t.dataset.srch){const q=t.value.toLowerCase().trim();document.querySelectorAll(`.cks[data-g="${t.dataset.srch}"] .ck`).forEach(l=>{l.hidden=q&&!l.dataset.t.includes(q)})}if(t.id==="extra"){store.set("extra",t.value);updPrayer()}if(t.dataset.k)store.set(t.dataset.k,t.value)});
 
-const LOGO=`<svg viewBox="0 0 64 64" width="64" height="64" aria-label="Only One God mark" fill="none"><circle cx="32" cy="32" r="29" stroke="currentColor" stroke-width="3"/><path d="M32 12v40M20 24h24" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="32" r="6" fill="currentColor" opacity=".25"/></svg>`;
+const LOGO=`<svg viewBox="0 0 64 64" width="64" height="64" aria-label="Deliverance study mark" fill="none"><circle cx="32" cy="32" r="29" stroke="currentColor" stroke-width="3"/><path d="M32 12v40M20 24h24" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="32" r="6" fill="currentColor" opacity=".25"/></svg>`;
 
 const th=store.get("theme",null)||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=th;$("#theme").textContent=th==="dark"?"💡 Day":"🌙 Night";
 if(synth&&synth.onvoiceschanged!==undefined)synth.onvoiceschanged=()=>{};

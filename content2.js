@@ -150,6 +150,70 @@ S.checklist.push(
 const extra2={t:"Renouncing Self-Worship, Channeling and Mediums",lines:["I renounce the lie that I am my own god, or that God is only my higher self.","I renounce \"many paths to God.\" Jesus said, I am the way, the truth, and the life: no man cometh unto the Father, but by me.","I renounce every channelled book, voice and teaching, and every spirit that spoke through them.","I renounce every medium and psychic I watched, consulted, or believed, on television or in person.","I renounce every shrine, libation, totem and traditional spirit, and every dedication made over my family."]};
 const di2=S.deliverance.findIndex(d=>d.t==="Breaking Family-Line Curses");S.deliverance.splice(di2,0,extra2);
 
+
+S.sources.britAfr={n:"Encyclopaedia Britannica — African religions",u:"https://www.britannica.com/topic/African-religions"};
+S.checklist.push({g:"African traditional spiritual practices",src:"britAfr",items:[
+ "Consulting a traditional or shrine priest (okomfo)",
+ "Akan shrines and lesser gods (abosom)",
+ "Asking a shrine or god for protection, children, money or a spouse",
+ "Trokosi or ritual servitude to a shrine",
+ "Swearing an oath by a god or shrine",
+ "Invoking a curse on someone through a shrine",
+ "Drinking a ritual concoction or oath-taking drink",
+ "Ritual sacrifice of fowls, goats, sheep or cattle",
+ "Blood sacrifice for blessing or protection",
+ "Ancestral stools and stool rites",
+ "Rituals to gods at traditional festivals",
+ "Libation or spirit rites at an outdooring (naming) ceremony",
+ "Funeral rites to send off or appease the spirit of the dead",
+ "Widowhood rites involving the spirit of the dead",
+ "Burying the placenta or umbilical cord with spiritual rites",
+ "Akuaba dolls or carvings for fertility",
+ "Twin rituals and twin carvings (Ibeji)",
+ "Ogbanje or abiku (spirit-child) rituals",
+ "Worship of named orishas (Sango, Ogun, Osun, Esu, Yemoja)",
+ "Babalawo (Ifá priest) consultations",
+ "Ori (head) rituals",
+ "Egungun masquerade rites",
+ "Masquerade societies (Mmanwu, Ekpe and others)",
+ "Ogboni society",
+ "Poro or Sande societies",
+ "Dibia (Igbo native doctor) consultations",
+ "Ikenga or Ofo shrines",
+ "Osu dedication of a person to a deity",
+ "Spirit possession trance or being \"mounted\" by a spirit",
+ "Mami Wata worship",
+ "Spiritual cleansing at a river, sea or crossroads",
+ "Offerings at crossroads, trees, rivers or rocks",
+ "Sacred trees, groves or rocks",
+ "Rainmaker rituals",
+ "Sangoma or inyanga consultations",
+ "Throwing bones for divination",
+ "Muthi (muti) for protection, luck or harm",
+ "Ukuthwasa (initiation as a traditional healer) or an \"ancestral calling\"",
+ "Mganga (East African witch doctor) consultations",
+ "Zar spirit-possession ceremonies",
+ "Nkisi or nkondi power figures",
+ "Bwiti and iboga ceremonies",
+ "Marabout or mallam charms, talismans and gris-gris",
+ "Waist beads or strings worn for spiritual protection or attraction",
+ "Love charms to bind a spouse",
+ "Charms for court cases, business, exams or travel",
+ "Sakawa or money rituals for wealth",
+ "\"Blood money\" or ritual wealth practices",
+ "Spiritual rites at enstoolment, enskinment or chieftaincy",
+ "Healers or \"prophets\" who prescribe candles, perfumes, sand or charms for protection"
+]});
+S.deliverance.splice(S.deliverance.findIndex(d=>d.t==="Breaking Family-Line Curses"),0,{t:"Renouncing African Traditional Spirits",lines:[
+ "I renounce every shrine, small god and ancestral spirit that my family or I served.",
+ "I renounce every sacrifice of blood, every libation and every offering made for me or over me.",
+ "I renounce every oath sworn by a god or shrine, and every curse invoked through them.",
+ "I renounce every charm, talisman, waist bead, ring, powder and concoction given to me for protection, love or money.",
+ "I renounce every masquerade, secret society and initiation of my family and my village.",
+ "I renounce every dedication of my name, my womb, my children and my destiny to any god.",
+ "They sacrificed unto devils, not to God; to gods whom they knew not. But I belong to the LORD Jesus Christ."
+]});
+
 // Kingdom of Darkness / Light (Neil T. Anderson)
 S.kingdom=[
  ["I renounce ever signing my name over to Satan or having had my name signed over to Satan.","I announce that my name is now written in the Lamb's Book of Life."],
